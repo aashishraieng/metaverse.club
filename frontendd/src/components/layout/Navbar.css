@@ -1,0 +1,84 @@
+/* Navbar Styling */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.8); /* Light transparent background */
+  border-bottom: none; /* Hide the bottom border */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+/* Navbar Logo Styling */
+.logo {
+  height: 50px;
+  width: auto;
+  transition: transform 0.3s ease, filter 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.logo:hover {
+  transform: scale(1.1); /* Slight zoom effect on hover */
+  filter: brightness(1.2); /* Slight increase in brightness on hover */
+}
+
+/* Ensure logo is on the left, and the buttons are on the right */
+.navbar .flex {
+  display: flex;
+  justify-content: space-between; /* Ensure logo and buttons are at opposite ends */
+  align-items: center;
+  width: 100%;
+}
+
+.navbar .space-x-4 {
+  display: flex;
+  gap: 1.5rem;
+  margin-left: auto; /* Ensure the buttons go to the right */
+}
+
+/* Button Styling */
+button {
+  background-color: #4caf50; /* Green button color */
+  color: white;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-weight: bold;
+  transition: all 0.3s ease; /* Smooth hover transition */
+  border: none;
+}
+
+button:hover {
+  background-color: #45a049; /* Darker green when hovered */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Button active state */
+button:active {
+  transform: translateY(1px); /* Button pressed effect */
+  background-color: #3e8e41;
+}
+
+/* Navbar Buttons for "Back", "Members", etc. */
+button.ghost {
+  background-color: transparent;
+  color: #1e3a8a; /* Blue text color */
+  border: 2px solid #1e3a8a;
+}
+
+button.ghost:hover {
+  background-color: #f0f8ff;
+  color: #4a90e2; /* Blue shade on hover */
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px;
+  }
+  .space-x-4 {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
