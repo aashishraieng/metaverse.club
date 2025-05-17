@@ -1,15 +1,17 @@
+from dotenv import load_dotenv
+from os import getenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.routes import contact_routes
 from app.routes import join_routes
 from app.routes import payment_routes  # NEW
 
+load_dotenv()
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to your frontend origin in production
+    allow_origins=[getenv("FRONTEND_ORIGIN")],# Change to your frontend origin in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
