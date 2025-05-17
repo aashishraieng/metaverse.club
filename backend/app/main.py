@@ -22,14 +22,10 @@ app.include_router(contact_routes.router, prefix="/api/v1")
 app.include_router(join_routes.router, prefix="/api/v1")
 app.include_router(payment_routes.router, prefix="/api/v1")  # NEW
 
-@app.on_event("startup")
-async def startup_event():
-    print("🚀 FastAPI server started and ready!")
-
 @app.get("/")
 async def root():
     return {"message": "Welcome to Metaverse API"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=6500)
+    uvicorn.run("main:app", host="127.0.0.1", port=6500)
 

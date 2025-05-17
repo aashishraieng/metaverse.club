@@ -13,7 +13,7 @@ class JoinForm(BaseModel):
     department: str
     reason: str  # This corresponds to the "Why do you want to join?" field
 
-@router.post("/join-club")
+@router.post("/api/v1/join-club")
 async def join_club(data: JoinForm):
     print("New join request received:")
     print(f"Name: {data.fullname}")
@@ -22,7 +22,6 @@ async def join_club(data: JoinForm):
     print(f"Phone: {data.phone_number}")
     print(f"Department: {data.department}")
     print(f"Reason: {data.reason}")
-
     email_body = f"""
     <h2>New Join Request from Metaverse Website</h2>
     <p><strong>Name:</strong> {data.fullname}</p>
@@ -32,7 +31,6 @@ async def join_club(data: JoinForm):
     <p><strong>Department:</strong> {data.department}</p>
     <p><strong>Reason:</strong><br>{data.reason}</p>
     """
-
     await send_contact_email(
         subject="New Join Form Submission - Metaverse Club",
         email_to="Metaverse.lpu@gmail.com",

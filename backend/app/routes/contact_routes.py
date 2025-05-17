@@ -12,7 +12,7 @@ class ContactForm(BaseModel):
     message: str
     servicechoice: str
 
-@router.post("/contact-club")
+@router.post("/api/v1/contact-club")
 async def contact_club(data: ContactForm):
     print("New contact message received:")
     print(f"Name: {data.fname} {data.lname}")
