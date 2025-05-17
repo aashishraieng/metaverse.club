@@ -1,10 +1,11 @@
+import uvicorn
 from dotenv import load_dotenv
 from os import getenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import contact_routes
-from app.routes import join_routes
-from app.routes import payment_routes  # NEW
+from routes import contact_routes
+from routes import join_routes
+from routes import payment_routes  # NEW
 
 load_dotenv()
 app = FastAPI()
@@ -28,3 +29,7 @@ async def startup_event():
 @app.get("/")
 async def root():
     return {"message": "Welcome to Metaverse API"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=6500)
+

@@ -1,7 +1,7 @@
 # app/routes/join_routes.py
 from fastapi import APIRouter
 from pydantic import BaseModel, EmailStr
-from app.utils.email_config import send_contact_email
+from utils.email_config import send_contact_email
 
 router = APIRouter()
 
