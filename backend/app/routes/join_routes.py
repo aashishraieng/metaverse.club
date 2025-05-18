@@ -13,7 +13,7 @@ class JoinForm(BaseModel):
     department: str
     reason: str  # This corresponds to the "Why do you want to join?" field
 
-@router.post("/api/v1/join-club")
+@router.post("/join-club")
 async def join_club(data: JoinForm):
     print("New join request received:")
     print(f"Name: {data.fullname}")
