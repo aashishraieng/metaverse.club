@@ -1,7 +1,7 @@
 # app/routes/join_routes.py
 from fastapi import APIRouter
 from pydantic import BaseModel, EmailStr
-from app.utils.email_config import send_contact_email
+from utils.email_config import send_contact_email
 
 router = APIRouter()
 
@@ -22,7 +22,6 @@ async def join_club(data: JoinForm):
     print(f"Phone: {data.phone_number}")
     print(f"Department: {data.department}")
     print(f"Reason: {data.reason}")
-
     email_body = f"""
     <h2>New Join Request from Metaverse Website</h2>
     <p><strong>Name:</strong> {data.fullname}</p>
@@ -32,7 +31,6 @@ async def join_club(data: JoinForm):
     <p><strong>Department:</strong> {data.department}</p>
     <p><strong>Reason:</strong><br>{data.reason}</p>
     """
-
     await send_contact_email(
         subject="New Join Form Submission - Metaverse Club",
         email_to="Metaverse.lpu@gmail.com",

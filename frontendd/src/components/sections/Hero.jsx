@@ -57,7 +57,7 @@ export function Hero() {
           variants={itemVariants}
           className="text-5xl md:text-6xl font-bold mb-6"
         >
-          Welcome to the Metaverse
+          Welcome To The Metaverse
         </motion.h1>
 
         <motion.p

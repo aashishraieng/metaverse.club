@@ -3,7 +3,7 @@ import "./Members.css";
 
 const members = [
   { src: "/ashsish.jpg", title: "Ashish Rai", description: "CEO  (Chief executive officer)" },
-  { src: "/ashsish.jpg", title: "Abhay Majumdar", description: "Co-CEO" },
+  { src: "/abhay.jpg", title: "Abhay Majumdar", description: "Co-CEO" },
   { src: "/akshat.jpg", title: "Akshat Singh", description: "COO  (Chief Operating Officer)" },
   { src: "/charu.jpg", title: "Charu Verma", description: "Social Media Head" },
   { src: "/divyanshi.jpg", title: "Divyanshi Sharma", description: "HR (Human resources)" },
