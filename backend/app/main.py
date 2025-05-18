@@ -27,5 +27,5 @@ async def root():
     return {"message": "Welcome to Metaverse API"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=6500)
+    uvicorn.run("main:app", host="0.0.0.0", port=6500)
 
