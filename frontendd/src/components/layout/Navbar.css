@@ -82,3 +82,53 @@ button.ghost:hover {
     gap: 1rem;
   }
 }
+
+
+/* Hamburger button hidden on desktop, visible on small screens */
+@media (min-width: 640px) {
+  /* sm breakpoint */
+  button[aria-label="Toggle menu"] {
+    display: none;
+  }
+}
+
+/* Navigation buttons container default hidden on small screens */
+@media (max-width: 639px) {
+  /* sm breakpoint */
+  .space-x-4 {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin-left: 0 !important;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    position: absolute;
+    top: 64px; /* below navbar */
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+  }
+}
+/* Your existing CSS, plus: */
+
+@media (max-width: 639px) {
+  .ghost {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+button.ghost {
+  background-color: transparent;
+  color: #1e3a8a;
+  border: 2px solid #1e3a8a;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+button.ghost:hover {
+  background-color: #f0f8ff;
+  color: #4a90e2;
+}
