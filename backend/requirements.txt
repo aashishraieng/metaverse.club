@@ -29,4 +29,5 @@ fastapi
 uvicorn
 fastapi-mail
 python-dotenv
+python-multipart
 
