@@ -33,14 +33,17 @@ export function Hero() {
 
   return (
     <section
-      className="relative py-36 text-center bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 overflow-hidden"
+      className="relative py-36 text-center bg-gradient-to-r from-green-600 via-green-500 to-blue-300
+
+
+ overflow-hidden"
       style={{ color: "white" }}
     >
       {/* Dynamic Background */}
       <motion.div
         variants={heroBgVariants}
         animate="animate"
-        className="absolute inset-0 bg-cover bg-center opacity-60"
+        className="absolute inset-0 bg-cover bg-center opacity-60  "
         style={{
           backgroundImage: "url('https://via.placeholder.com/1600x900/0000FF/808080?text=Metaverse')",
         }}
@@ -57,7 +60,7 @@ export function Hero() {
           variants={itemVariants}
           className="text-5xl md:text-6xl font-bold mb-6"
         >
-          Welcome To The Metaverse
+          Welcome to the Metaverse
         </motion.h1>
 
         <motion.p
@@ -67,7 +70,7 @@ export function Hero() {
           A world of endless possibilities and limitless creativity. Join the revolution today!
         </motion.p>
 
-       
+
       </motion.div>
 
       {/* Floating Animated Circles */}
