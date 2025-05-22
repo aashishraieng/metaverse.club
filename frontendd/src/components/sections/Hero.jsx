@@ -33,7 +33,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative py-36 text-center bg-gradient-to-r from-green-600 via-green-500 to-blue-300
+      className="relative py-36 text-center bg-gradient-to-r from-violet-500 via-blue-700 to-violet-500
 
 
  overflow-hidden"
