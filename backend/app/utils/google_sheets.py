@@ -1,31 +1,25 @@
 import os
+import json
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-# Load credentials JSON file path from environment variable or hardcode here for testing
-SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_SHEETS_CREDENTIALS", "app/utils/credentials.json")
+# Load credentials JSON from environment variable
+credentials_info = json.loads(os.environ["GOOGLE_CREDENTIALS_JSON"])
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-# The ID of your spreadsheet (find it in the URL of your Google Sheet)
-SPREADSHEET_ID = '1C1YQ6BHPa9wBmxn-bX1jjo44HdM9K4lvL9hZvYb3suk'
+# Create credentials object
+credentials = service_account.Credentials.from_service_account_info(credentials_info, scopes=SCOPES)
 
-credentials = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
+# Access the Google Sheets API
 service = build('sheets', 'v4', credentials=credentials)
 sheet = service.spreadsheets()
 
 def append_row(data: list, sheet_name="Sheet1"):
-    """
-    Append a row to the Google Sheet.
-    :param data: list of values for the row
-    :param sheet_name: the sheet/tab name inside your Google Sheet
-    """
     body = {
         'values': [data]
     }
     result = sheet.values().append(
-        spreadsheetId=SPREADSHEET_ID,
+        spreadsheetId='YOUR_SPREADSHEET_ID',
         range=f"{sheet_name}!A1",
         valueInputOption="RAW",
         insertDataOption="INSERT_ROWS",
