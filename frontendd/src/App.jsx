@@ -10,20 +10,33 @@ import { WelcomePage } from "@/components/welcomepage";
 import JoiningForm from "@/components/JoinForm.jsx";
 import { Registration } from "@/components/sections/Registration";
 import { RegistrationNow } from "@/components/sections/RegistrationNow";
+import TermsAndConditions from "@/components/sections/tnc";
+import RefundPolicy from "@/components/sections/rnc";
+import ShippingPolicy from "@/components/sections/snd";
 import { motion, AnimatePresence } from "framer-motion";
 import 'bootstrap/dist/css/bootstrap.css';
 
 function App() {
-  const [showWelcomePage, setShowWelcomePage] = useState(true);
+  // Check if welcome page has been shown before in this session
+  const [showWelcomePage, setShowWelcomePage] = useState(() => {
+    const hasShownWelcome = sessionStorage.getItem('hasShownWelcome');
+    return hasShownWelcome !== 'true';
+  });
+  
   const location = useLocation();
   const prevPath = useRef(location.pathname);
   const direction = useRef(1);
+  
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowWelcomePage(false);
-    }, 3000);
-    return () => clearTimeout(timer);
+    if (showWelcomePage) {
+      const timer = setTimeout(() => {
+        setShowWelcomePage(false);
+        sessionStorage.setItem('hasShownWelcome', 'true');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
   }, [showWelcomePage]);
+  
   useEffect(() => {
     // Example of custom direction logic (you can customize this)
     if (prevPath.current === "/" && location.pathname === "/register-now") {
@@ -33,11 +46,13 @@ function App() {
     }
     prevPath.current = location.pathname;
   }, [location.pathname]);
+  
   const variants = {
     initial: (dir) => ({ opacity: 0, x: dir === 1 ? 200 : -200 }),
     animate: { opacity: 1, x: 0 },
     exit: (dir) => ({ opacity: 0, x: dir === 1 ? -200 : 200 }),
   };
+  
   return (
     <div className="min-h-screen bg-white">
       {showWelcomePage ? (
@@ -60,6 +75,9 @@ function App() {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/join-club" element={<JoiningForm />} />
                   <Route path="/register-now" element={<RegistrationNow />} />
+                  <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                  <Route path="/refund-policy" element={<RefundPolicy />} />
+                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
                 </Routes>
               </motion.div>
             </AnimatePresence>

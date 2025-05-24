@@ -26,7 +26,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="/joijn-club"
+                  href="/join-club"
                   className="text-black-300 hover:text-white transition-colors duration-300"
                 >
                   Joins
@@ -46,6 +46,30 @@ export function Footer() {
                   className="text-black-300 hover:text-white transition-colors duration-300"
                 >
                   Contact
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/terms-and-conditions"
+                  className="text-black-300 hover:text-white transition-colors duration-300"
+                >
+                  Terms & Conditions
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/refund-policy"
+                  className="text-black-300 hover:text-white transition-colors duration-300"
+                >
+                  Refund Policy
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/shipping-policy"
+                  className="text-black-300 hover:text-white transition-colors duration-300"
+                >
+                  Shipping & Delivery
                 </a>
               </li>
             </ul>
