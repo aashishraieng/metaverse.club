@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { User, Phone, Hash, BookOpen, Mail } from "lucide-react";
+import { db } from "../firebase/config";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function JoiningForm() {
   const [isValidPhoneNum, setIsValidPhoneNum] = useState(null);
@@ -8,6 +10,7 @@ export default function JoiningForm() {
   const [phoneNumText, setPhoneNum] = useState("");
   const [regnoText, setRegNo] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleRegInput = (e) => {
     const value = e.target.value.trim();
@@ -23,26 +26,22 @@ export default function JoiningForm() {
 
   const handleJoinSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const formData = Object.fromEntries(new FormData(e.target).entries());
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_BASE}/api/v1/join-club`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      // Save to Firebase instead of API
+      await addDoc(collection(db, "joining_requests"), {
+        ...formData,
+        timestamp: serverTimestamp()
       });
-
-      const body = await res.json();
-
-      if (res.ok && body.status === "success") {
-        setIsSubmitted(true);
-      } else {
-        console.error("Error submitting form:", body);
-        alert(body.message || "Something went wrong.");
-      }
+      
+      setIsSubmitted(true);
     } catch (error) {
-      console.error("Network error:", error);
+      console.error("Firebase error:", error);
       alert("Failed to submit form. Try again later.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -205,9 +204,10 @@ export default function JoiningForm() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="submit"
-                    className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
+                    disabled={isSubmitting}
+                    className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg disabled:opacity-70"
                   >
-                    Submit Application
+                    {isSubmitting ? "Submitting..." : "Submit Application"}
                   </motion.button>
                   <button
                     type="reset"

@@ -1,37 +1,35 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import "./Contact.css";
+import { db } from "../../firebase/config";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export function Contact() {
   const CLUB_MAIL = "Metaverce.lpu@gmail.com";
   const [otherChoiceForJoin, setOtherChoice] = useState(false);
   const [submitted, setSubmitted] = useState(false); // controls visibility of form
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const formdata = Object.fromEntries(new FormData(e.target).entries());
 
     try {
-      console.log("Formdata:", formdata);
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_BASE}/api/v1/contact-club`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formdata),
+      // Save to Firebase instead of API call
+      await addDoc(collection(db, "contacts"), {
+        ...formdata,
+        timestamp: serverTimestamp()
       });
-
-      const body = await res.json();
-
-      if (res.ok && body.status === "success") {
-        setSubmitted(true); // Hide form and show success message
-        setErrorMessage("");
-      } else {
-        setErrorMessage("❌ Failed to send message. Please try again.");
-        console.error("Backend error:", body);
-      }
+      
+      setSubmitted(true); // Hide form and show success message
+      setErrorMessage("");
     } catch (error) {
-      setErrorMessage("❌ Network error. Please try again later.");
-      console.error("Network error:", error);
+      setErrorMessage("❌ Failed to send message. Please try again.");
+      console.error("Firebase error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -48,7 +46,7 @@ export function Contact() {
         {submitted ? (
           <div className="success-message">
             ✅ Your message has been sent successfully! <br />
-            We’ll reach out to you on your email or phone number soon.
+            We'll reach out to you on your email or phone number soon.
           </div>
         ) : (
           <>
@@ -106,7 +104,9 @@ export function Contact() {
                 </div>
               )}
               <div className="submit-wrap full">
-                <button type="submit">Send Message</button>
+                <button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </button>
               </div>
               {errorMessage && <div className="error-message">{errorMessage}</div>}
             </form>
