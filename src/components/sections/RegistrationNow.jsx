@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 export function RegistrationNow() {
   const [formData, setFormData] = useState({
@@ -12,7 +14,8 @@ export function RegistrationNow() {
   });
 
   const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false); // New state for submission status
+  const [submitting, setSubmitting] = useState(false);
+  const [firebaseStatus, setFirebaseStatus] = useState(null);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -20,39 +23,34 @@ export function RegistrationNow() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true); // Start submitting
+    setSubmitting(true);
+    setFirebaseStatus(null);
 
     try {
-      const backendUrl = "https://api-metaverse-qq4c.onrender.com";
-
-      fetch(`${backendUrl}/api/v1/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      // Add data to Firebase
+      const docRef = await addDoc(collection(db, "registrations"), {
+        ...formData,
+        timestamp: new Date()
       });
-
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("Server Response:", data);
-        setSubmitted(true);
-        setFormData({
-          name: "",
-          reg_number: "",
-          email: "",
-          department: "",
-          contact_number: "",
-        });
-      } else {
-        console.error("Error:", data);
-        alert("Registration failed! " + (data.detail || "Try again."));
-      }
+      
+      console.log("Firebase document written with ID:", docRef.id);
+      setFirebaseStatus({ success: true, id: docRef.id });
+      setSubmitted(true);
+      
+      // Reset form after successful submission
+      setFormData({
+        name: "",
+        reg_number: "",
+        email: "",
+        department: "",
+        contact_number: "",
+      });
     } catch (err) {
-      console.error("Network error:", err);
-      alert("Something went wrong. Please try again.");
+      console.error("Firebase Error:", err);
+      setFirebaseStatus({ success: false, error: err.message });
+      alert("Error saving to Firebase: " + err.message);
     } finally {
-      setSubmitting(false); // End submitting
+      setSubmitting(false);
     }
   };
 
@@ -77,6 +75,18 @@ export function RegistrationNow() {
         {submitted && !submitting && (
           <p className="text-green-500 text-center font-semibold">
             🎉 Registration Successful!
+          </p>
+        )}
+
+        {firebaseStatus && firebaseStatus.success && (
+          <p className="text-blue-400 text-center text-sm">
+            ✅ Data saved to Firebase (ID: {firebaseStatus.id.substring(0, 6)}...)
+          </p>
+        )}
+
+        {firebaseStatus && !firebaseStatus.success && (
+          <p className="text-red-400 text-center text-sm">
+            ❌ Firebase Error: {firebaseStatus.error}
           </p>
         )}
 
