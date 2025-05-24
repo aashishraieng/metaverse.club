@@ -81,14 +81,14 @@ export function Registration() {
           future. One event at a time.
         </motion.p>
 
-        {/* <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants}>
           <Button
             onClick={() => navigate("/register-now")}
             className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:bg-indigo-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-indigo-500 transition-all duration-300 ease-in-out"
           >
             Register Now
           </Button>
-        </motion.div> */}
+        </motion.div>
       </motion.div>
     </section>
   );
