@@ -23,11 +23,11 @@ export function RegistrationNow() {
     setSubmitting(true); // Start submitting
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_BASE}/api/v1/register`, {
+      const backendUrl = "https://api-metaverse-qq4c.onrender.com";
+
+      fetch(`${backendUrl}/api/v1/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
