@@ -64,6 +64,14 @@ export function Footer() {
                   Refund Policy
                 </a>
               </li>
+              <li>
+                <a
+                  href="/privacy-policy"
+                  className="text-black-300 hover:text-white transition-colors duration-300"
+                >
+                  Privacy Policy
+                </a>
+              </li>
             </ul>
           </div>
 
