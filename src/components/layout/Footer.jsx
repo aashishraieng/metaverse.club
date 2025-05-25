@@ -64,27 +64,23 @@ export function Footer() {
                   Refund Policy
                 </a>
               </li>
-              <li>
-                <a
-                  href="/shipping-policy"
-                  className="text-black-300 hover:text-white transition-colors duration-300"
-                >
-                  Shipping & Delivery
-                </a>
-              </li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-2xl font-bold mb-4 text-white-600">Contact Us</h3>
-            <p className="text-black-300">
+            <p className="text-black-300 mb-3">
               <a href="mailto:info@Metaverse.com">Metaverse.lpu@gmail.com</a>
             </p>
-            <p className="text-black-300">
+            <p className="text-black-300 mb-3">
               <a href="https://www.instagram.com/metaverse_official00/#" className="hover:text-white">
                 Instagram-: @metaverse_official00
               </a>
             </p>
+            <address className="text-black-300 not-italic">
+              Division of Student Welfare, Lovely Professional University, Jalandhar - Delhi G.T. Road,<br />
+              Phagwara, Punjab (India) - 144411
+            </address>
           </div>
         </div>
 

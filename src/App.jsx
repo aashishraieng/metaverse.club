@@ -11,7 +11,6 @@ import { Registration } from "@/components/sections/Registration";
 import { RegistrationNow } from "@/components/sections/RegistrationNow";
 import TermsAndConditions from "@/components/sections/tnc";
 import RefundPolicy from "@/components/sections/rnc";
-import ShippingPolicy from "@/components/sections/snd";
 import Members from "@/components/sections/Members";
 import { motion, AnimatePresence } from "framer-motion";
 import 'bootstrap/dist/css/bootstrap.css';
@@ -80,7 +79,6 @@ function App() {
                   <Route path="/register-now" element={<RegistrationNow />} />
                   <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
                   <Route path="/refund-policy" element={<RefundPolicy />} />
-                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
                   <Route path="/members" element={<Members />} />
                   <Route path="/admin" element={<AdminLogin />} />
                   <Route path="/admin/dashboard" element={
