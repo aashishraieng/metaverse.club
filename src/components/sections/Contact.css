@@ -1,47 +1,77 @@
-/* Contact Section Background */
 .contact-section {
-  min-height: 100vh;
-  padding: 4rem 1rem;
-  background: radial-gradient(circle at top, #0f0f0f 0%, #111 100%);
+  min-height: 0vh;
+  padding: 4rem 2rem;
+  background: #f9f9f9;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
 }
-
-/* Neon Card */
-.contact-card {
-  background: rgba(25, 25, 25, 0.6);
+.contact-container {
+  display: flex;
+  background: #f5f9ff; /* light background */
   border-radius: 20px;
-  border: 1.5px solid rgba(0, 255, 255, 0.2);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 0 25px rgba(0, 255, 255, 0.08);
-  padding: 2.5rem;
-  max-width: 760px;
+  border: 1.5px solid #ccc;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  max-width: 1100px;  /* increased width */
   width: 100%;
-  color: #fff;
-  transition: 0.3s ease;
+  gap: 1.5rem;
+  overflow: hidden;
+  margin: auto; /* center horizontally */
 }
 
-/* Title Gradient Text */
+/* Equal widths */
+.left-box,
+.right-box {
+  flex: 1;
+  border-radius: 20px;
+  overflow: hidden;
+  min-width: 0; /* prevent overflow issues */
+}
+
+/* Left box background and image */
+.left-box {
+  background: #e0ebff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.left-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Right box with form */
+.right-box {
+  background: #ffffff;
+  padding: 3rem 3.5rem; /* increased padding for more space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 400px; /* ensures the form area doesn’t get too narrow */
+}
+
+
 .form-title {
   font-size: 2.5rem;
-  font-weight: bold;
+  font-weight: 700;
   text-align: center;
   margin-bottom: 2rem;
-  background: linear-gradient(90deg, #00ffff, #ff00ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #333;
 }
 
-/* Grid Layout */
+/* Form grid layout */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.2rem;
 }
 
-/* Full Row Inputs */
 .input-group.full {
   grid-column: span 2;
 }
@@ -51,35 +81,33 @@
   flex-direction: column;
 }
 
-/* Label */
 .input-group label {
-  color: #00ffff;
+  color: #555;
   margin-bottom: 0.4rem;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-/* Input Fields */
 .input-group input,
 .input-group textarea {
   padding: 12px 16px;
-  border-radius: 12px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border: 1px solid #333;
-  color: #fff;
+  border-radius: 8px;
+  background-color: #fafafa;
+  border: 1.5px solid #ccc;
+  color: #333;
   font-size: 1rem;
   transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .input-group input:focus,
 .input-group textarea:focus {
-  border-color: #00ffff;
+  border-color: #5ab4f8;
   outline: none;
-  box-shadow: 0 0 10px #00ffff88;
-  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 8px #5ab4f8aa;
+  background: #fff;
 }
 
-/* Checkboxes */
 .checkbox-grid {
   display: flex;
   flex-wrap: wrap;
@@ -90,42 +118,44 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  color: #ddd;
+  color: #666;
+  font-weight: 500;
 }
 
-.checkbox-grid input[type="checkbox"] {
-  accent-color: #00ffff;
+.checkbox-grid input[type="checkbox"],
+.checkbox-grid input[type="radio"] {
+  accent-color: #5ab4f8;
   cursor: pointer;
 }
 
-/* Submit Button */
 .submit-wrap {
   text-align: center;
   margin-top: 1rem;
 }
 
 .submit-wrap button {
-  background: linear-gradient(90deg, #00ffff, #ff00ff);
+  background: #5ab4f8;
   border: none;
   border-radius: 30px;
   padding: 12px 30px;
-  color: black;
-  font-weight: 600;
+  color: white;
+  font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 0 12px #00ffffaa;
+  box-shadow: 0 4px 12px #5ab4f8cc;
   transition: 0.3s ease;
 }
 
 .submit-wrap button:hover {
+  background: #4a99e9;
+  box-shadow: 0 6px 20px #4a99e9cc;
   transform: scale(1.05);
-  box-shadow: 0 0 16px #ff00ffaa;
 }
 
 .success-message {
   padding: 20px;
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #dff0d8;
+  color: #3c763d;
   border-radius: 10px;
   font-size: 1.2rem;
   font-weight: 600;
@@ -136,8 +166,25 @@
   margin-top: 1rem;
   padding: 10px;
   background-color: #f8d7da;
-  color: #721c24;
+  color: #842029;
   border-radius: 8px;
   text-align: center;
-  font-weight: bold;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .contact-container {
+    flex-direction: column;
+    border-radius: 20px;
+  }
+
+  .left-box img {
+    border-radius: 20px 20px 0 0;
+    height: 250px;
+  }
+
+  .right-box {
+    padding: 2rem 1.5rem;
+  }
 }
