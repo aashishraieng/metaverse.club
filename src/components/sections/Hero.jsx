@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "../layout/Navbar";
 import bgImage from "../../assets/background.jpg";
-import aboutImage from "../../assets/aboutimage.jpg"; // Replace with your actual image file name
+import aboutImage from "../../assets/aboutimage.jpg";
 
 export function Hero() {
   const containerVariants = {
@@ -38,8 +38,8 @@ export function Hero() {
     <>
       {/* Hero Section */}
       <section
-        className="relative h-screen w-full overflow-hidden text-white"
-        style={{ color: "white" }}
+        className="relative h-screen w-full overflow-hidden"
+        style={{ color: "black" }} // text color globally
       >
         <div className="absolute top-0 left-0 w-full z-30">
           <Navbar />
@@ -47,8 +47,6 @@ export function Hero() {
 
         {/* Background Image */}
         <motion.div
-          variants={heroBgVariants}
-          animate="animate"
           className="absolute inset-0 bg-cover bg-center opacity-60"
           style={{
             backgroundImage: `url(${bgImage})`,
@@ -62,20 +60,32 @@ export function Hero() {
           initial="hidden"
           animate="visible"
         >
-          <motion.h1
-            variants={itemVariants}
-            className="text-5xl md:text-6xl font-bold mb-6"
+          {/* Translucent background box around text */}
+          <div
+            className="inline-block px-10 py-8 rounded-3xl mx-auto"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.75)", // translucent white
+              backdropFilter: "blur(8px)",
+              maxWidth: "800px",
+            }}
           >
-            Welcome to the Metaverse
-          </motion.h1>
+            <motion.h1
+              variants={itemVariants}
+              className="text-7xl font-extrabold mb-6"
+              style={{ color: "black" }}
+            >
+              Welcome to the Metaverse
+            </motion.h1>
 
-          <motion.p
-            variants={itemVariants}
-            className="text-lg md:text-xl mb-10 max-w-2xl mx-auto"
-          >
-            A world of endless possibilities and limitless creativity. Join the
-            revolution today!
-          </motion.p>
+            <motion.p
+              variants={itemVariants}
+              className="text-2xl font-bold max-w-2xl mx-auto"
+              style={{ color: "black" }}
+            >
+              A world of endless possibilities and limitless creativity. Join the
+              revolution today!
+            </motion.p>
+          </div>
         </motion.div>
 
         {/* Floating Animated Circles */}
@@ -118,7 +128,7 @@ export function Hero() {
           transition={{ duration: 1 }}
           style={{ minHeight: "350px" }}
         >
-          <h2 className="text-4xl font-semibold mb-4">About Us</h2>
+          <h2 className="text-4xl font-bold mb-4">About Us</h2>
           <p className="text-lg leading-relaxed flex-grow">
             The Metaverse is a digital universe full of endless possibilities,
             creativity, and immersive experiences. We are pioneers building
