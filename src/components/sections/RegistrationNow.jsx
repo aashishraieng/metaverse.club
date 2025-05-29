@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import bgImage from "@/assets/event.webp"; // Your local image
 
 export function RegistrationNow() {
   const [formData, setFormData] = useState({
@@ -27,17 +28,13 @@ export function RegistrationNow() {
     setFirebaseStatus(null);
 
     try {
-      // Add data to Firebase
       const docRef = await addDoc(collection(db, "registrations"), {
         ...formData,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
-      
       console.log("Firebase document written with ID:", docRef.id);
       setFirebaseStatus({ success: true, id: docRef.id });
       setSubmitted(true);
-      
-      // Reset form after successful submission
       setFormData({
         name: "",
         reg_number: "",
@@ -55,12 +52,25 @@ export function RegistrationNow() {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center py-20 px-4 bg-gradient-to-r from-gray-900 to-gray-700">
+    <section
+      className="min-h-screen flex items-center justify-center px-8 py-20"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-lg bg-gray-800 text-white rounded-3xl shadow-xl p-10 space-y-8 hover:ring-4 hover:ring-indigo-500"
+        className="bg-gray-800 bg-opacity-90 text-white rounded-3xl shadow-xl p-10 max-w-lg w-full"
+        style={{
+          // This pushes form slightly right of center
+          marginLeft: "auto",
+          marginRight: "15%",
+        }}
       >
         <h2 className="text-3xl font-extrabold text-center text-gray-100 mb-4">
           ✨ Register Now for an Event!
@@ -91,7 +101,8 @@ export function RegistrationNow() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Disable inputs and button while submitting */}
+          {/* All input fields remain unchanged */}
+          {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Full Name
@@ -111,6 +122,7 @@ export function RegistrationNow() {
             />
           </div>
 
+          {/* Registration Number */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Registration Number
@@ -130,6 +142,7 @@ export function RegistrationNow() {
             />
           </div>
 
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Email Address
@@ -149,6 +162,7 @@ export function RegistrationNow() {
             />
           </div>
 
+          {/* Department */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Department
@@ -168,6 +182,7 @@ export function RegistrationNow() {
             />
           </div>
 
+          {/* Contact Number */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Contact Number
@@ -187,6 +202,7 @@ export function RegistrationNow() {
             />
           </div>
 
+          {/* Submit Button */}
           <motion.div
             whileHover={{ scale: submitting ? 1 : 1.1 }}
             whileTap={{ scale: submitting ? 1 : 0.95 }}
