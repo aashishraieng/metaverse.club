@@ -1,11 +1,11 @@
-/* Navbar Styling */
 .navbar {
-  background-color: transparent !important; /* Transparent background */
-  backdrop-filter: none !important; /* Remove blur */
-  box-shadow: none !important; /* No shadow */
+  background-color: rgba(255, 255, 255, 0.5) !important; /* translucent white */
+  backdrop-filter: blur(10px); /* blur behind the navbar */
+  box-shadow: none !important;
   padding: 10px 20px;
 }
 
+/* Keep your existing styles for logo and buttons */
 .logo {
   height: 50px;
   width: auto;
@@ -21,9 +21,9 @@
 }
 
 
-/* Buttons container already centered with flex-grow and justify-center */
 
-/* Button Styling */
+
+/* Button styles (keep as you had them) */
 button {
   background-color: #4caf50;
   color: white;
@@ -64,4 +64,3 @@ button.ghost:hover {
     display: none !important;
   }
 }
-
