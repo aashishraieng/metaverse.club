@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Navbar } from "../layout/Navbar";
 import bgImage from "../../assets/background.jpg";
 import aboutImage from "../../assets/aboutimage.jpg";
-
+import ScrollToTopButton from './ScrollToTopButton';
 export function Hero() {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -205,6 +205,8 @@ export function Hero() {
           </div>
         </div>
       </section>
+
+      <ScrollToTopButton />
     </>
   );
 }
