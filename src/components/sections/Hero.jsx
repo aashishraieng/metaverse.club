@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Navbar } from "../layout/Navbar";
+// import { Navbar } from "../layout/Navbar"; // Removed import
 import bgImage from "../../assets/background.jpg";
 import aboutImage from "../../assets/aboutimage.jpg";
 import ScrollToTopButton from './ScrollToTopButton';
@@ -41,9 +41,7 @@ export function Hero() {
         className="relative h-screen w-full overflow-hidden"
         style={{ color: "black" }} // text color globally
       >
-        <div className="absolute top-0 left-0 w-full z-30">
-          <Navbar />
-        </div>
+        {/* Navbar removed from here, App.jsx will provide it */}
 
         {/* Background Image */}
         <motion.div

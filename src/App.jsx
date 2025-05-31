@@ -9,6 +9,8 @@ import { WelcomePage } from "@/components/welcomepage";
 import JoiningForm from "@/components/JoinForm.jsx";
 import { Registration } from "@/components/sections/Registration";
 import { RegistrationNow } from "@/components/sections/RegistrationNow";
+import { PaymentSuccess } from "@/components/sections/PaymentSuccess";
+import { PaymentFailed } from "@/components/sections/PaymentFailed"; // Added
 import TermsAndConditions from "@/components/sections/tnc";
 import RefundPolicy from "@/components/sections/rnc";
 import PrivacyPolicy from "@/components/sections/privacy";
@@ -77,7 +79,9 @@ function App() {
                   } />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/join-club" element={<JoiningForm />} />
-                  <Route path="/register-now" element={<RegistrationNow />} />
+                  <Route path="/register-now/:eventId" element={<RegistrationNow />} /> {/* Modified */}
+                  <Route path="/payment-success" element={<PaymentSuccess />} />
+                  <Route path="/payment-failed" element={<PaymentFailed />} /> {/* Added */}
                   <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
                   <Route path="/refund-policy" element={<RefundPolicy />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
