@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable max-len */
 /* eslint-disable object-curly-spacing */
-const functions = require("firebase-functions"); // Reverting to v1 for simplicity, will keep process.env
+const functions = require("firebase-functions"); // For v1 HTTP functions
+const {onDocumentWritten} = require("firebase-functions/v2/firestore"); // For v2 Firestore triggers
 const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const Razorpay = require("razorpay");
@@ -113,6 +114,60 @@ exports.createRazorpayOrder = functions.https.onRequest((request, response) => {
   });
 });
 
+/**
+ * Firestore-triggered function to ensure only one event is active (v2 syntax).
+ * When an event is set to isActive: true, this function sets all other events to isActive: false.
+ */
+exports.ensureSingleActiveEvent = onDocumentWritten("events/{eventId}", async (event) => {
+  // Note: For onDocumentWritten, event.params.eventId is used
+  const eventId = event.params.eventId;
+  // event.data contains before and after snapshots
+  const newValue = event.data.after.data();
+  const previousValue = event.data.before.data();
+
+  // If the event was just set to active (or created as active)
+  // and it wasn't active before (or didn't exist)
+  if (newValue && newValue.isActive && (!previousValue || !previousValue.isActive)) {
+    logger.info(`Event ${eventId} was set to active. Deactivating other events.`);
+
+    const eventsRef = db.collection("events");
+    // Query for all other documents that are currently active
+    const q = eventsRef.where("isActive", "==", true).where(admin.firestore.FieldPath.documentId(), "!=", eventId);
+
+    try {
+      const querySnapshot = await q.get();
+      if (querySnapshot.empty) {
+        logger.info("No other active events found to deactivate.");
+        return null;
+      }
+
+      const batch = db.batch();
+      querySnapshot.forEach((doc) => {
+        logger.info(`Deactivating event: ${doc.id}`);
+        batch.update(doc.ref, {isActive: false});
+      });
+
+      await batch.commit();
+      logger.info(`Successfully deactivated ${querySnapshot.size} other event(s).`);
+      return null;
+    } catch (error) {
+      logger.error("Error deactivating other events:", error);
+      // Optionally, you could try to revert the current event's isActive status
+      // await event.data.after.ref.update({ isActive: false });
+      // logger.error(`Reverted ${eventId} to inactive due to error in deactivating others.`);
+      return null; // Or throw error to signal failure, though this might cause retries
+    }
+  } else if (newValue && !newValue.isActive && previousValue && previousValue.isActive) {
+    logger.info(`Event ${eventId} was deactivated. No other actions needed by this function.`);
+    return null;
+  } else if (!event.data.after.exists) {
+    logger.info(`Event ${eventId} was deleted. No other actions needed by this function.`);
+    return null;
+  }
+
+  // logger.info(`Event ${eventId} write detected, but no action needed for isActive status.`);
+  return null;
+});
 // Example of how to structure the "events" collection in Firestore:
 // Document ID: someEventId123
 // Fields:

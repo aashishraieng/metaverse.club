@@ -3,10 +3,14 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { FaLock, FaServer, FaHeadset, FaLightbulb, FaComments } from "react-icons/fa";
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import { db } from "@/firebase/config"; // Assuming db is exported from your firebase config
 
 export function Registration() {
   const navigate = useNavigate();
   const [currentPromise, setCurrentPromise] = useState(0);
+  const [activeEventId, setActiveEventId] = useState(null);
+  const [loadingActiveEvent, setLoadingActiveEvent] = useState(true);
 
   const promises = [
     "We value your privacy and protect your data.",
@@ -30,6 +34,33 @@ export function Registration() {
     }, 4000); // change every 4 seconds
     return () => clearInterval(interval);
   }, [promises.length]);
+
+  useEffect(() => {
+    const fetchActiveEvent = async () => {
+      setLoadingActiveEvent(true);
+      try {
+        const eventsRef = collection(db, "events");
+        const q = query(eventsRef, where("isActive", "==", true), limit(1));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          // Assuming only one event should be active
+          const activeEventDoc = querySnapshot.docs[0];
+          setActiveEventId(activeEventDoc.id);
+        } else {
+          console.log("No active event found for registration.");
+          setActiveEventId(null);
+        }
+      } catch (error) {
+        console.error("Error fetching active event:", error);
+        setActiveEventId(null); // Handle error case
+      } finally {
+        setLoadingActiveEvent(false);
+      }
+    };
+
+    fetchActiveEvent();
+  }, []);
 
   const bubbles = Array.from({ length: 7 });
 
@@ -111,10 +142,17 @@ export function Registration() {
 
           <motion.div variants={itemVariants}>
             <Button
-              onClick={() => navigate("/register-now")}
-              className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow-md hover:bg-indigo-700 transition duration-300"
+              onClick={() => {
+                if (activeEventId) {
+                  navigate(`/register-now/${activeEventId}`);
+                } else if (!loadingActiveEvent) {
+                  alert("There are currently no active events open for registration.");
+                }
+              }}
+              disabled={loadingActiveEvent || !activeEventId}
+              className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow-md hover:bg-indigo-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Register Now
+              {loadingActiveEvent ? "Loading Event..." : "Register Now"}
             </Button>
           </motion.div>
 
