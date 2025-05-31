@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Admin access rules
+    match /admin/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.resource.data.setupKey == "metaverse123";
+    }
+    
+    // Registrations access rules
+    match /registrations/{document=**} {
+      allow create: if false; // Functions will handle creation
+      allow read: if request.auth != null; // Example: Authenticated users can read
+      allow update, delete: if false; // Admin/functions only
+    }
+    
+    // Contact form submissions
+    match /contacts/{document=**} {
+      allow create: if true;
+      allow read: if request.auth != null;
+    }
+    
+    // Join club form submissions
+    match /joining_requests/{document=**} {
+      allow create: if true;
+      allow read: if request.auth != null;
+    }
+
+    // Events collection rules
+    match /events/{eventId} {
+      allow read: if true; // Allows public read of event details
+      allow write: if request.auth != null; // Allow authenticated users to write
+    }
+
+    // Admin Users collection rules
+    match /adminUsers/{userId} {
+      allow read: if request.auth != null; // Allow authenticated (admin) users to read the list
+      // Define write rules carefully, e.g., only specific super-admins or via Cloud Functions
+      allow write: if false; // Example: Disallow client-side writes for now
+    }
+    
+    // Default deny all other operations on unspecified paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
