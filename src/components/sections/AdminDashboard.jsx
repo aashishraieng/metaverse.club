@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"; // Added DropdownMenu
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { RegistrationsTable } from "./admin/RegistrationsTable";
 import { ContactsTable } from "./admin/ContactsTable";
 import { JoiningRequestsTable } from "./admin/JoiningRequestsTable";
@@ -28,7 +28,6 @@ export function AdminDashboard() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [showExportOptions, setShowExportOptions] = useState(false); // No longer needed
   const [searchCategory, setSearchCategory] = useState("all");
   const [activeTab, setActiveTab] = useState("registrations");
   const navigate = useNavigate();
@@ -213,14 +212,111 @@ export function AdminDashboard() {
     const parts = text.toString().split(regex);
     return parts.map((part, index) => regex.test(part) ? <span key={index} className="bg-yellow-300 text-gray-900 px-0.5 rounded">{part}</span> : part );
   };
-  const handleSetActiveEvent = async (eventIdToActivate) => { /* ... */ };
-  const handleNewEventInputChange = (e) => { /* ... */ };
-  const handleCreateNewEvent = async (e) => { /* ... */ };
-  const handleOpenEditEventDialog = (event) => { /* ... */ };
-  const handleUpdateEvent = async (e) => { /* ... */ };
-  const handleDeleteEvent = async (eventId, eventName) => { /* ... */ };
-  // Removed handleEditUser and handleDeleteUser
+  
+  const handleSetActiveEvent = async (eventIdToActivate) => {
+    console.log("[AdminDashboard] handleSetActiveEvent called for eventId:", eventIdToActivate);
+    if (!auth.currentUser) {
+      alert("Authentication error. Please sign out and sign in again.");
+      return;
+    }
+    try {
+      const eventRef = doc(db, "events", eventIdToActivate);
+      await updateDoc(eventRef, { isActive: true });
+      console.log(`Event ${eventIdToActivate} successfully set to active.`);
+    } catch (e) {
+      console.error("Error setting event active: ", e);
+      alert(`Failed to set event active: ${e.message}`);
+    }
+  };
 
+  const handleNewEventInputChange = (e) => {
+    const { name, value, type } = e.target;
+    const val = type === "checkbox" ? e.target.checked : (type === "number" ? parseFloat(value) * 100 : value);
+    setNewEventFormData(prev => ({ ...prev, [name]: val }));
+  };
+
+  const handleCreateNewEvent = async (e) => { 
+    e.preventDefault();
+    console.log("[AdminDashboard] handleCreateNewEvent called with data:", newEventFormData);
+    if (!auth.currentUser) {
+      alert("Authentication error. Please sign out and sign in again.");
+      return;
+    }
+    if (!newEventFormData.eventName || !newEventFormData.registrationFee || newEventFormData.registrationFee <= 0) {
+      alert("Event Name and a valid Registration Fee (greater than 0) are required.");
+      return;
+    }
+    try {
+      const eventDataToSave = { ...newEventFormData, createdAt: serverTimestamp() };
+      await addDoc(collection(db, "events"), eventDataToSave);
+      alert("Event created successfully!");
+      setIsCreateEventDialogOpen(false);
+      setNewEventFormData({ eventName: "", registrationFee: 0, currency: "INR", description: "", isActive: false });
+    } catch (error) {
+      console.error("Error creating new event: ", error);
+      alert(`Failed to create event: ${error.message}`);
+    }
+  };
+
+  const handleOpenEditEventDialog = (event) => {
+    console.log("[AdminDashboard] handleOpenEditEventDialog called for event:", event);
+    setNewEventFormData({
+      eventName: event.eventName,
+      registrationFee: event.registrationFee, 
+      currency: event.currency,
+      description: event.description || "",
+      isActive: event.isActive,
+    });
+    setEditingEvent(event); 
+    setIsEditEventDialogOpen(true);
+  };
+
+  const handleUpdateEvent = async (e) => { 
+    e.preventDefault();
+    console.log("[AdminDashboard] handleUpdateEvent called for event:", editingEvent, "with data:", newEventFormData);
+    if (!auth.currentUser) {
+      alert("Authentication error. Please sign out and sign in again.");
+      return;
+    }
+    if (!editingEvent || !editingEvent.id) {
+      alert("No event selected for editing.");
+      return;
+    }
+    if (!newEventFormData.eventName || !newEventFormData.registrationFee || newEventFormData.registrationFee <= 0) {
+      alert("Event Name and a valid Registration Fee (greater than 0) are required.");
+      return;
+    }
+    try {
+      const eventRef = doc(db, "events", editingEvent.id);
+      await updateDoc(eventRef, { ...newEventFormData });
+      alert("Event updated successfully!");
+      setIsEditEventDialogOpen(false);
+      setEditingEvent(null);
+      setNewEventFormData({ eventName: "", registrationFee: 0, currency: "INR", description: "", isActive: false });
+    } catch (error) {
+      console.error("Error updating event: ", error);
+      alert(`Failed to update event: ${error.message}`);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId, eventName) => { 
+    console.log("[AdminDashboard] handleDeleteEvent called for eventId:", eventId, "eventName:", eventName);
+    if (!auth.currentUser) {
+      alert("Authentication error. Please sign out and sign in again.");
+      return;
+    }
+    if (window.confirm(`Are you sure you want to delete the event "${eventName}"? This action cannot be undone.`)) {
+      try {
+        const eventRef = doc(db, "events", eventId);
+        await deleteDoc(eventRef);
+        alert(`Event "${eventName}" deleted successfully.`);
+      } catch (error) {
+        console.error("Error deleting event: ", error);
+        alert(`Failed to delete event: ${error.message}`);
+      }
+    }
+  };
+  
   if (loading) { return ( <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center"><div className="text-center"><div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div><p>Loading dashboard...</p></div></div> ); }
 
   return (
