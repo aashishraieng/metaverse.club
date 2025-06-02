@@ -21,6 +21,16 @@ export function Navbar() {
     setIsOpen(false);
   };
 
+  // Animation variants for buttons
+  const buttonVariant = {
+    hidden: { opacity: 0, y: -10 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: 0.1 * i, duration: 0.3 },
+    }),
+  };
+
   return (
     <nav
       style={{
@@ -30,61 +40,73 @@ export function Navbar() {
         boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         position: "relative",
         zIndex: 20,
+        padding: "0 1rem",
       }}
       className="w-full"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16">
+      <div className="max-w-7xl mx-auto flex items-center h-16 sm:px-6 px-4">
         {/* Logo on the left */}
-        <div className="flex-shrink-0">
-          <img src="/logo.png" alt="Logo" className="logo" />
+        <div className="flex-shrink-0 flex items-center">
+          <img
+            src="/logo.png"
+            alt="Logo"
+            className="logo"
+            style={{ height: 50, width: "auto" }}
+          />
         </div>
 
-        {/* Centered buttons */}
-        <div className="flex-grow flex justify-center space-x-4">
+        {/* Centered buttons on desktop */}
+        <div className="hidden sm:flex flex-grow justify-center gap-4">
           {isHome ? (
-            <>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/members")}
-                className="text-gray-800 hover:text-pink-600 transition-colors duration-300"
+            [
+              { label: "Members", path: "/members" },
+              { label: "Event", path: "/Events" },
+              { label: "Contact", path: "/contact" },
+              { label: "Join", path: "/join-club" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.path}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={buttonVariant}
               >
-                Members
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/Events")}
-                className="text-gray-800 hover:text-pink-600 transition-colors duration-300"
-              >
-                Event
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/contact")}
-                className="text-gray-800 hover:text-pink-600 transition-colors duration-300"
-              >
-                Contact
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/join-club")}
-                className="text-gray-800 hover:text-pink-600 transition-colors duration-300"
-              >
-                Join
-              </Button>
-            </>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate(item.path)}
+                  className="text-gray-800 hover:text-pink-600 transition-colors duration-300"
+                >
+                  {item.label}
+                </Button>
+              </motion.div>
+            ))
           ) : (
+            // If NOT home, hide these buttons, only show back button on mobile below
+            <></>
+          )}
+        </div>
+
+        {/* Back button on the right for non-home pages */}
+        {!isHome && (
+          <motion.div
+            className="ml-auto"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <Button
               variant="ghost"
               onClick={() => navigate("/")}
               className="text-gray-800 hover:text-pink-600 transition-colors duration-300 flex items-center space-x-2"
+              style={{ padding: "8px 16px" }}
             >
               <span style={{ fontSize: "1.5em" }}>←</span>
               <span>Back</span>
             </Button>
-          )}
-        </div>
+          </motion.div>
+        )}
 
-        {/* Hamburger menu on mobile only */}
+        {/* Hamburger menu on mobile only, shown only on home */}
         {isHome && (
           <div className="sm:hidden absolute right-4">
             <button
@@ -129,27 +151,28 @@ export function Navbar() {
             transition={{ duration: 0.3 }}
             className="absolute top-16 left-0 w-full bg-white/90 backdrop-blur-md z-40 py-4 space-y-2 flex flex-col items-center sm:hidden shadow-md"
           >
-            <Button
-              variant="ghost"
-              onClick={() => closeMenuAndNavigate("/members")}
-              className="w-3/4 text-center text-gray-800 hover:text-pink-600"
-            >
-              Members
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => closeMenuAndNavigate("/contact")}
-              className="w-3/4 text-center text-gray-800 hover:text-pink-600"
-            >
-              Contact
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => closeMenuAndNavigate("/join-club")}
-              className="w-3/4 text-center text-gray-800 hover:text-pink-600"
-            >
-              Join
-            </Button>
+            {[
+              { label: "Members", path: "/members" },
+              { label: "Contact", path: "/contact" },
+              { label: "Join", path: "/join-club" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.path}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={buttonVariant}
+                className="w-3/4"
+              >
+                <Button
+                  variant="ghost"
+                  onClick={() => closeMenuAndNavigate(item.path)}
+                  className="w-full text-center text-gray-800 hover:text-pink-600"
+                >
+                  {item.label}
+                </Button>
+              </motion.div>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
