@@ -4,6 +4,9 @@ import { User, Phone, Hash, BookOpen, Mail } from "lucide-react";
 import { db } from "../firebase/config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
+// Import your image from assets
+import joinImage from "../assets/join.jpg"; // Change this path/name to your actual image
+
 export default function JoiningForm() {
   const [isValidPhoneNum, setIsValidPhoneNum] = useState(null);
   const [isValidRegNo, setIsValidRegNo] = useState(null);
@@ -30,12 +33,11 @@ export default function JoiningForm() {
     const formData = Object.fromEntries(new FormData(e.target).entries());
 
     try {
-      // Save to Firebase instead of API
       await addDoc(collection(db, "joining_requests"), {
         ...formData,
-        timestamp: serverTimestamp()
+        timestamp: serverTimestamp(),
       });
-      
+
       setIsSubmitted(true);
     } catch (error) {
       console.error("Firebase error:", error);
@@ -53,14 +55,25 @@ export default function JoiningForm() {
   };
 
   return (
-    <section className="py-24 bg-gradient-to-br from-purple-50 to-teal-100 min-h-screen">
+    <section className="min-h-screen bg-gradient-to-br from-purple-50 to-teal-100 flex items-center justify-center py-16 px-4">
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="max-w-4xl mx-auto px-6"
+        className="flex max-w-6xl w-full rounded-3xl shadow-2xl border border-teal-200 overflow-hidden bg-white"
+        style={{ minHeight: "80vh" }}
       >
-        <div className="bg-white rounded-3xl shadow-2xl p-10 md:p-14 border border-teal-200 transition-all duration-700 hover:shadow-teal-300">
+        {/* Left box - image */}
+        <div className="flex-1 relative">
+          <img
+            src={joinImage}
+            alt="Join MetaVerce"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Right box - form */}
+        <div className="flex-1 p-10 md:p-14 overflow-y-auto">
           {isSubmitted ? (
             <div className="text-center">
               <h2 className="text-3xl font-bold text-teal-600 mb-4">
@@ -72,10 +85,15 @@ export default function JoiningForm() {
             </div>
           ) : (
             <>
-              <h2 className="text-4xl font-bold text-center text-gray-800 mb-10 transition-all duration-500">
-                Join <span className="text-teal-600">MetaVerce</span> & Unlock Your Journey!
+              <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
+                Join <span className="text-teal-600">MetaVerce</span> & Unlock
+                Your Journey!
               </h2>
-              <form className="space-y-6" onSubmit={handleJoinSubmit} onReset={handleReset}>
+              <form
+                className="space-y-6 max-h-[65vh]"
+                onSubmit={handleJoinSubmit}
+                onReset={handleReset}
+              >
                 {/* Full Name */}
                 <div>
                   <label className="block font-semibold mb-1 text-gray-700 flex items-center gap-2">
