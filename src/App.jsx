@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { Features } from "@/components/sections/Features";
+import Promise from "@/components/sections/Promise";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/layout/Footer";
 import { WelcomePage } from "@/components/welcomepage";
@@ -15,6 +16,7 @@ import TermsAndConditions from "@/components/sections/tnc";
 import RefundPolicy from "@/components/sections/rnc";
 import PrivacyPolicy from "@/components/sections/privacy";
 import Members from "@/components/sections/Members";
+import EventPage from "@/components/sections/EventPage";
 import { motion, AnimatePresence } from "framer-motion";
 import 'bootstrap/dist/css/bootstrap.css';
 import { AdminLogin } from "@/components/sections/AdminLogin";
@@ -74,6 +76,7 @@ function App() {
                     <>
                       <Hero />
                       <Registration />
+                      <Promise />
                       <Features />
                     </>
                   } />
@@ -86,6 +89,7 @@ function App() {
                   <Route path="/refund-policy" element={<RefundPolicy />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/members" element={<Members />} />
+                  <Route path="/events" element={<EventPage/>} />
                   <Route path="/admin" element={<AdminLogin />} />
                   <Route path="/admin/dashboard" element={
                     <ProtectedRoute>
