@@ -24,6 +24,10 @@ import { AdminDashboard } from "@/components/sections/AdminDashboard";
 import { AdminSetup } from "@/components/sections/AdminSetup";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
+
+
+
+
 function App() {
   const location = useLocation();
   const [showWelcomePage, setShowWelcomePage] = useState(true);
@@ -76,6 +80,7 @@ function App() {
                     <>
                       <Hero />
                       <Registration />
+                     
                       <Promise />
                       <Features />
                     </>
