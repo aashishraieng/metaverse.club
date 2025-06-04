@@ -1,146 +1,141 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import confetti from 'canvas-confetti';
-import heroImg from '../../assets/background.jpg';
-import event1Img from '../../assets/event1.jpg';
-import event2Img from '../../assets/event2.jpg';
-import event3Img from '../../assets/event1.jpg';
-import event4Img from '../../assets/event2.jpg';
+import './EventPage.css';
+import Badminton from '../../assets/badminton.jpg';
+import Boxing from '../../assets/boxing.webp';
+import Poetry from '../../assets/poetry.jpg';
+import Photography from '../../assets/photography.webp';
+import Football from '../../assets/football.jpeg';
+import Cricket from '../../assets/cricket.jpg';
+import Gust from '../../assets/gustlecture.webp';
+import Standup from '../../assets/standup.jpg';
+import Swimming from '../../assets/swimming.jpg';
+import Trip from '../../assets/Trip.jpg';
+import Webinar from '../../assets/webinar.avif';
 
-const initialEvents = [
+
+const eventData = [
   {
-    id: 1,
-    image: event1Img,
-    title: 'Hackathon 2025',
-    text: 'A high-energy coding event for techies and developers.',
-  },
-  {
-    id: 2,
-    image: event2Img,
-    title: 'Art Fiesta',
-    text: 'Celebrate colors, creativity, and culture.',
-  },
-  {
-    id: 3,
-    image: event3Img,
-    title: 'AI Workshop',
-    text: 'Hands-on learning experience in machine learning and AI.',
-  },
-  {
-    id: 4,
-    image: event4Img,
-    title: 'Poetry Night',
-    text: 'A cozy night of poetic brilliance and performances.',
-  },
+  title: 'Poetry',
+  description: 'A creative expression of emotions and thoughts through rhythmic and aesthetic language.',
+  image: Poetry,
+},
+{
+  title: 'Boxing',
+  description: 'An intense sport emphasizing strength, strategy, and endurance in physical combat.',
+  image: Boxing,
+},
+{
+  title: 'Football',
+  description: 'A dynamic team sport focused on skill, teamwork, and competitive spirit on the field.',
+  image: Football,
+},
+{
+  title: 'Photography',
+  description: 'The art of capturing moments and stories through the lens of a camera.',
+  image: Photography,
+},
+{
+  title: 'Badminton',
+  description: 'A fast-paced racquet sport requiring agility, precision, and quick reflexes.',
+  image: Badminton,
+},
+{
+  title: 'Webinar',
+  description: 'An interactive online seminar designed for sharing knowledge and engaging audiences remotely.',
+  image: Webinar,
+},
+{
+  title: 'Trip',
+  description: 'An adventurous journey to explore new places, cultures, and experiences.',
+  image: Trip,
+},
+{
+  title: 'Swimming',
+  description: 'A full-body exercise and sport that promotes health, stamina, and relaxation in water.',
+  image: Swimming,
+},
+{
+  title: 'Standup',
+  description: 'A form of comedy where performers entertain audiences through humorous monologues and storytelling.',
+  image: Standup,
+},
+{
+  title: 'Gust Lecture',
+  description: 'An educational talk delivered by a guest expert to provide insights and inspire learning.',
+  image: Gust,
+},
+{
+  title: 'Cricket',
+  description: 'A strategic team sport known for its rich tradition, skillful play, and spirited competition.',
+  image: Cricket,
+},
+
+
+
 ];
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
+export default function WuxingCarousel() {
+  const [index, setIndex] = useState(0);
 
-const STORAGE_KEY = 'rsvpCounts';
-
-const EventPage = () => {
-  // Initialize state from localStorage or fallback to zeros
-  const [rsvpCounts, setRsvpCounts] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // If corrupted data, fallback to zero counts
-      }
-    }
-    // default zero counts
-    return initialEvents.reduce((acc, event) => {
-      acc[event.id] = 0;
-      return acc;
-    }, {});
-  });
-
-  // Save to localStorage every time rsvpCounts changes
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(rsvpCounts));
-  }, [rsvpCounts]);
-
-  const handleRSVP = (id, event) => {
-    setRsvpCounts((prev) => ({
-      ...prev,
-      [id]: prev[id] + 1,
-    }));
-    const rect = event.target.getBoundingClientRect();
-    confetti({
-      particleCount: 100,
-      spread: 120,
-      origin: {
-        x: (rect.left + rect.width / 2) / window.innerWidth,
-        y: (rect.top + rect.height / 2) / window.innerHeight,
-      },
-    });
+  const nextSlide = () => {
+    setIndex((prev) => (prev + 1) % eventData.length);
   };
 
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const currentEvent = eventData[index];
+
   return (
-    <div className="bg-pink-200 text-blue-900 min-h-screen p-6 overflow-visible">
-      {/* Hero Section */}
-      <motion.section
-        className="w-full bg-cover bg-center text-white text-center py-28 px-4 mb-12 rounded-3xl"
-        style={{
-          backgroundImage: `linear-gradient(rgba(30,30,30,0.7), rgba(0,0,0,0.7)), url(${heroImg})`,
-        }}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        variants={fadeInUp}
-      >
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to Our Events</h1>
-        <p className="text-lg md:text-xl">Explore the amazing events we host regularly</p>
-      </motion.section>
+    <div className="carousel-wrapper">
+      <div className="left-text">
+        <h1>{currentEvent.title}</h1>
+        <p>{currentEvent.description}</p>
+      </div>
 
-      {/* Events Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-        {initialEvents.map((event) => (
-          <motion.div
-            key={event.id}
-            className="relative overflow-visible rounded-2xl shadow-lg cursor-pointer group flex flex-col"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-          >
-            {/* Image */}
-            <img
-              src={event.image}
-              alt={event.title}
-              className="w-full h-48 md:h-56 object-cover rounded-t-2xl transition-transform duration-500"
-            />
+      <div className="right-carousel">
+        <div className="stacked-carousel">
+          {eventData.map((item, i) => {
+            // Calculate offset from active index (wrap around)
+            const offset = (i - index + eventData.length) % eventData.length;
 
-            {/* Text Overlay (no bottom rounded corners) */}
-            <motion.div
-              initial={{ y: 0 }}
-              className="bg-black/90 px-6 py-4 text-white flex-grow"
-            >
-              <h3 className="text-2xl font-semibold">{event.title}</h3>
-              <p className="mt-2 text-sm opacity-100">{event.text}</p>
-            </motion.div>
+            // We only show first 3 cards stacked for performance & style
+            if (offset > 3) return null;
 
-            {/* RSVP Button */}
-            <div className="bg-black/80 px-6 py-3 mt-2 flex justify-between items-center rounded-b-2xl">
-              <button
-                onClick={(e) => handleRSVP(event.id, e)}
-                className="bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold px-4 py-2 rounded shadow"
+            // Calculate style props for 3D stacking effect:
+            // The closer to 0 offset (active), the more front & bigger
+            // Farther ones get smaller, shifted, and back on z-axis
+            const zIndex = 10 - offset;
+            const scale = 1 - 0.1 * offset;
+            const xOffset = 60 * offset;  // shift more sideways so cards peek from the right
+const yOffset = 10 * offset;  // slight downward shift
+const zOffset = -80 * offset; // further back in 3D
+
+
+            return (
+              <motion.div
+                key={item.title}
+                className="stacked-image-wrapper"
+                style={{ zIndex }}
+                initial={{ opacity: 0, scale: 0.8, x: 100, y: 50, z: 0 }}
+                animate={{
+                  opacity: 1,
+                  scale,
+                  x: xOffset,
+                  y: yOffset,
+                  z: zOffset,
+                }}
+                transition={{ duration: 0.6, ease: 'easeInOut' }}
               >
-                RSVP
-              </button>
-              <span className="text-white font-medium select-none">
-                Attending: {rsvpCounts[event.id]}
-              </span>
-            </div>
-          </motion.div>
-        ))}
+                <img src={item.image} alt={item.title} />
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
-};
-
-export default EventPage;
+}
