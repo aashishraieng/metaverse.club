@@ -1,0 +1,169 @@
+.carousel-wrapper {
+  display: flex;
+  background-color: black;
+  color: white;
+  min-height: 100vh;
+  padding: 3rem;
+  gap: 3rem;
+  flex-wrap: wrap;
+  perspective: 1500px; /* Enable 3D perspective */
+  position: relative; /* Needed for ::before layering */
+  z-index: 1; /* Ensure above stars */
+}
+
+/* Starry background behind carousel */
+.carousel-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background:
+    radial-gradient(1.5px 1.5px at 10% 20%, white, transparent),
+    radial-gradient(1.2px 1.2px at 15% 80%, white, transparent),
+    radial-gradient(1.8px 1.8px at 25% 60%, white, transparent),
+    radial-gradient(1.3px 1.3px at 30% 40%, white, transparent),
+    radial-gradient(1.6px 1.6px at 35% 75%, white, transparent),
+    radial-gradient(1.1px 1.1px at 40% 30%, white, transparent),
+    radial-gradient(1.7px 1.7px at 45% 90%, white, transparent),
+    radial-gradient(1.4px 1.4px at 50% 20%, white, transparent),
+    radial-gradient(1.9px 1.9px at 55% 50%, white, transparent),
+    radial-gradient(1.3px 1.3px at 60% 35%, white, transparent),
+    radial-gradient(1.5px 1.5px at 65% 70%, white, transparent),
+    radial-gradient(1.0px 1.0px at 70% 25%, white, transparent),
+    radial-gradient(1.8px 1.8px at 75% 60%, white, transparent),
+    radial-gradient(1.2px 1.2px at 80% 40%, white, transparent),
+    radial-gradient(1.6px 1.6px at 85% 85%, white, transparent),
+    radial-gradient(1.4px 1.4px at 90% 30%, white, transparent),
+    radial-gradient(1.1px 1.1px at 95% 75%, white, transparent);
+  background-repeat: repeat;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.8;
+  animation: twinkle 4s infinite ease-in-out alternate;
+}
+
+/* twinkle animation for stars */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+
+/* rest of your styles below unchanged */
+
+.left-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  max-width: 400px;
+  user-select: none;
+}
+
+.left-text h1 {
+  font-size: 3.5rem;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.left-text p {
+  font-size: 1.3rem;
+  color: #e0e0e0;
+  line-height: 1.7;
+}
+
+.right-carousel {
+  flex: 1.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  perspective: 1500px; /* perspective for children 3D */
+  min-height: 480px;
+  min-width: 480px;
+}
+
+.stacked-carousel {
+  position: relative;
+  width: 450px;
+  height: 450px;
+  transform-style: preserve-3d; /* keep 3D transform */
+  user-select: none;
+}
+
+/* Each stacked image */
+.stacked-image-wrapper {
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.25);
+  background: #111;
+  transform-style: preserve-3d;
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+  transition: box-shadow 0.3s ease;
+}
+
+.stacked-image-wrapper:hover {
+  box-shadow: 0 12px 40px rgba(255, 255, 255, 0.45);
+  z-index: 20 !important; /* bring hovered card front */
+}
+
+.stacked-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .carousel-wrapper {
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  .left-text {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .right-carousel {
+    flex: 1.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    perspective: 1500px;
+    min-height: 480px;
+    min-width: 480px;
+    overflow: visible; /* allow overflow so behind cards are visible */
+    padding-left: 50px; /* give some room on left side */
+  }
+
+  .stacked-carousel {
+    position: relative;
+    width: 450px;
+    height: 450px;
+    transform-style: preserve-3d;
+    user-select: none;
+    overflow: visible; /* allow overflow */
+  }
+
+  .stacked-image-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+}
