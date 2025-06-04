@@ -126,12 +126,12 @@ export function Hero() {
           transition={{ duration: 1 }}
           style={{ minHeight: "350px" }}
         >
-          <h2 className="text-4xl font-bold mb-4">About Us</h2>
+          <h2 className="text-4xl font-bold mb-4">About </h2>
           <p className="text-lg leading-relaxed flex-grow">
-            The Metaverse is a digital universe full of endless possibilities,
-            creativity, and immersive experiences. We are pioneers building
-            the next frontier where technology, imagination, and human
-            connection come together.
+            METAVERSE — The Ultimate student club that brings together technology, creativity, and fun!
+            From coding contests and technical workshops to non-technical games, debates, and exciting social media challenges,
+            we’ve got it all. Whether you're a tech enthusiast or just want to explore something new,
+            METAVERSE is the perfect place to grow, connect, and shine. Don’t just be a spectator — be a creator.
             <br />
             <br />
             Join us as we explore new realities, create innovative solutions,
@@ -160,11 +160,8 @@ export function Hero() {
       {/* Core Values Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-gray-800">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <p className="uppercase tracking-wide text-sm text-gray-500 mb-2">
-            Prefix describing what your business does will be here
-          </p>
           <h2 className="text-4xl font-bold mb-4">
-            Headline Describing Your Company Core Values Will Come Here
+            <u>Metaverse Core Values</u>
           </h2>
         </div>
 
@@ -173,9 +170,10 @@ export function Hero() {
           <div className="flex items-start space-x-6">
             <div className="flex-shrink-0 text-4xl font-bold text-indigo-600">01</div>
             <div>
-              <h3 className="text-2xl font-semibold mb-2">Core Value 1</h3>
+              <h2 className="text-2xl font-semibold mb-2">Teamwork</h2>
               <p className="text-lg leading-relaxed">
-                In this part, we will write about the core values and guiding principles that influence your business choices and operations.
+
+                Bringing together different skills and perspectives that enrich an organization and make it better. Collaborating as a team drives innovation, team bonding, learning and development, and shared wins.
               </p>
             </div>
           </div>
@@ -184,9 +182,10 @@ export function Hero() {
           <div className="flex items-start space-x-6">
             <div className="flex-shrink-0 text-4xl font-bold text-indigo-600">02</div>
             <div>
-              <h3 className="text-2xl font-semibold mb-2">Core Value 2</h3>
+              <h3 className="text-2xl font-semibold mb-2"> Excellence</h3>
               <p className="text-lg leading-relaxed">
-                In this part, we will write about the core values and guiding principles that influence your business choices and operations.
+
+                Workplace excellence is about striving to go above and beyond every day. It’s pushing boundaries of what’s possible and never settling for less than the highest quality of work.
               </p>
             </div>
           </div>
@@ -195,9 +194,10 @@ export function Hero() {
           <div className="flex items-start space-x-6">
             <div className="flex-shrink-0 text-4xl font-bold text-indigo-600">03</div>
             <div>
-              <h3 className="text-2xl font-semibold mb-2">Core Value 3</h3>
+              <h3 className="text-2xl font-semibold mb-2">Leadership</h3>
               <p className="text-lg leading-relaxed">
-                In this part, we will write about the core values and guiding principles that influence your business choices and operations.
+
+                Empowering and motivating others towards a shared goal. Leadership can take on many forms, from setting an inspiring vision and direction to offering guidance and support to leading by example.
               </p>
             </div>
           </div>
