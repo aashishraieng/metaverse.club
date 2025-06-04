@@ -93,9 +93,9 @@ export function Features() {
             <motion.div variants={iconVariants} whileHover="hover">
               <Mail className="h-12 w-12 mx-auto mb-5 text-pink-400" />
             </motion.div>
-            <h3 className="text-2xl font-semibold mb-3">Stay Updated</h3>
+            <h3 className="text-2xl font-semibold mb-3">Grow with the Club</h3>
             <p className="text-gray-300">
-              Never miss an update! Stay informed on our latest news and announcements.
+              Take part in building something bigger. Share ideas, lead projects, earn recognition — and grow with a community that values your voice.
             </p>
           </motion.div>
         </div>
