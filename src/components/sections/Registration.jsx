@@ -125,13 +125,11 @@ export function Registration() {
         whileHover={{ rotateX: 3, rotateY: -3 }}
         transition={{ type: "spring", stiffness: 100 }}
       >
-        <motion.h2 variants={itemVariants} className="text-4xl font-bold text-gray-800 mb-6">
-          ☁️ Float into the Metaverse!
-        </motion.h2>
+        <motion.h4 variants={itemVariants} className="text-2xl  text-gray-800 mb-6">
+          ☁️ "The future is no longer a distant concept—it's here, and it's waiting for you. By registering today, you're not just joining a platform; you're stepping into a world of limitless possibilities, innovation, and connection. Don’t stand on the sidelines while others shape the next digital frontier. Take the first step toward your metaverse journey and be part of the transformation that’s redefining how we live, work, and interact."
+        </motion.h4>
 
-        <motion.p variants={itemVariants} className="text-lg text-gray-600 mb-8">
-          Connect with dreamers, builders, and visionaries.
-        </motion.p>
+
 
         <motion.div variants={itemVariants}>
           <Button
