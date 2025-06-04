@@ -5,10 +5,10 @@ import Promisevideo from "../../assets/promise.mp4";
 
 const Promise = () => {
   const promises = [
-    "We respect your data and privacy.",
-    "You’ll always have someone to connect with.",
-    "No spam, only value.",
-    "We build a community, not just an event."
+    "Where innovation meets trust — we promise a seamless virtual experience.",
+    "A world beyond limits, built on your dreams and our commitment.",
+    "our vision, our promise — together we shape tomorrow.",
+    "We don’t just open doors — we promise a world of possibilities."
   ];
 
   const promiseIcons = {
