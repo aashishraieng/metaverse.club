@@ -65,10 +65,31 @@ module.exports = {
 					from: { height: 'var(--radix-accordion-content-height)' },
 					to: { height: 0 },
 				},
+				'shake-fast': {
+					'0%, 100%': { transform: 'rotate(-2deg)' },
+					'50%': { transform: 'rotate(2deg)' },
+				},
+				'bounce-in': {
+					'0%': { transform: 'scale(0.9)', opacity: 0 },
+					'60%': { transform: 'scale(1.05)', opacity: 1 },
+					'100%': { transform: 'scale(1)', opacity: 1 },
+				},
+				'icon-motion': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-5px)' },
+				},
+				'wall-swing': {
+					'0%, 100%': { transform: 'rotate(1deg)' },
+					'50%': { transform: 'rotate(-1deg)' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
+				'shake-fast': 'shake-fast 0.3s ease-in-out infinite',
+				'bounce-in': 'bounce-in 0.6s ease-in-out',
+				'icon-motion': 'icon-motion 0.8s ease-in-out infinite',
+				'wall-swing': 'wall-swing 3s ease-in-out infinite',
 			},
 		},
 	},

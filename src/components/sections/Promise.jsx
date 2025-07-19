@@ -1,79 +1,119 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Hand, Users, Star } from "lucide-react";
-import Promisevideo from "../../assets/promise.mp4";
+
+const promises = [
+  {
+    text: "Where innovation meets trust — we promise a seamless virtual experience.",
+    icon: ShieldCheck,
+    bg: "bg-pink-100",
+  },
+  {
+    text: "A world beyond limits, built on your dreams and our commitment.",
+    icon: Hand,
+    bg: "bg-blue-100",
+  },
+  {
+    text: "Our vision, our promise — together we shape tomorrow.",
+    icon: Users,
+    bg: "bg-green-100",
+  },
+  {
+    text: "We don’t just open doors — we promise a world of possibilities.",
+    icon: Star,
+    bg: "bg-yellow-100",
+  },
+];
+
+// Floating animation
+const floatAnimation = {
+  initial: { y: 0, rotate: -2 },
+  animate: {
+    y: [0, -4, 0, 4, 0],
+    rotate: [-2, 2, -2],
+    transition: {
+      duration: 4,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};
+
+// Hover shake + pass to icon
+const boxHover = {
+  whileHover: {
+    rotate: [0, 2, -2, 2, 0],
+    transition: {
+      duration: 0.5,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const iconHover = {
+  whileHover: {
+    scale: [1, 1.2, 1],
+    rotate: [0, 10, -10, 0],
+    transition: {
+      duration: 0.6,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const boxVariants = {
+  hidden: { opacity: 0, y: 60 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.3,
+      duration: 0.8,
+      type: "spring",
+      stiffness: 80,
+    },
+  }),
+};
 
 const Promise = () => {
-  const promises = [
-    "Where innovation meets trust — we promise a seamless virtual experience.",
-    "A world beyond limits, built on your dreams and our commitment.",
-    "our vision, our promise — together we shape tomorrow.",
-    "We don’t just open doors — we promise a world of possibilities."
-  ];
-
-  const promiseIcons = {
-    0: <ShieldCheck size={40} />,
-    1: <Hand size={40} />,
-    2: <Users size={40} />,
-    3: <Star size={40} />,
-  };
-
-  const [currentPromise, setCurrentPromise] = useState(0);
-
-  const nextPromise = () => {
-    setCurrentPromise((prev) => (prev + 1) % promises.length);
-  };
-
-  // Auto-slide every 2 seconds
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      nextPromise();
-    }, 2000);
-
-    return () => clearInterval(intervalId); // cleanup on unmount
-  }, []);
-
   return (
-    <section className="relative w-full h-[500px] overflow-hidden">
-      {/* Background Video */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        src={Promisevideo}
-        type="video/mp4"
-      />
-
-      {/* Dark Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 z-10" />
-
-      {/* Text Box on Right */}
-      <div className="relative z-20 h-full flex items-center justify-end px-6 md:px-12">
-        <div className="bg-white bg-opacity-90 text-indigo-900 rounded-xl p-10 w-full max-w-md shadow-2xl min-h-[320px] flex flex-col justify-between">
-          <div>
-            <h3 className="text-2xl font-bold mb-6">Promise from Us</h3>
+    <section className="w-full bg-white py-20 px-6 flex justify-center items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-w-7xl w-full">
+        {promises.map((item, index) => {
+          const Icon = item.icon;
+          return (
             <motion.div
-              key={currentPromise}
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -30 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-4 text-lg font-medium min-h-[80px]"
+              key={index}
+              className="relative flex flex-col items-center"
+              variants={boxVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={index}
             >
-              {promiseIcons[currentPromise]}
-              <span>{promises[currentPromise]}</span>
-            </motion.div>
-          </div>
+              {/* Pin Dot */}
+              <div className="w-3 h-3 rounded-full bg-black absolute top-0 z-20 shadow-md" />
 
-          <button
-            onClick={nextPromise}
-            className="mt-6 self-end bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full transition"
-          >
-            Next →
-          </button>
-        </div>
+              {/* Card */}
+              <motion.div
+                className={`${item.bg} p-6 pt-8 rounded-xl shadow-2xl border border-black w-full text-center flex flex-col items-center justify-center gap-4 transition-transform`}
+                variants={floatAnimation}
+                initial="initial"
+                animate="animate"
+                {...boxHover}
+              >
+                {/* Icon with animation on hover */}
+                <motion.div {...iconHover}>
+                  <Icon size={40} className="text-indigo-700" />
+                </motion.div>
+
+                <p className="text-gray-800 text-base font-semibold">{item.text}</p>
+              </motion.div>
+            </motion.div>
+          );
+        })}
       </div>
     </section>
   );

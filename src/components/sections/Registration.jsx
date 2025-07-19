@@ -1,201 +1,198 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Sparkles, Rocket, ShieldCheck, BadgeCheck } from "lucide-react";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { db } from "@/firebase/config";
 
-import VideoBg1 from "../../assets/regis1video.mp4";
-import VideoBg2 from "../../assets/regis2video.mp4";
-import VideoBg3 from "../../assets/regis3video.mp4";
+const promises = [
+  {
+    icon: <Sparkles size={32} />,
+    title: "Innovation",
+    desc: "We bring cutting-edge tech to your learning journey.",
+  },
+  {
+    icon: <ShieldCheck size={32} />,
+    title: "Security",
+    desc: "Your data and privacy are our top priority.",
+  },
+  {
+    icon: <BadgeCheck size={32} />,
+    title: "Trust",
+    desc: "Built with love and trusted by students & teachers.",
+  },
+];
+
+// Animation Variants
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 20,
+    },
+  },
+};
+
+const scaleFade = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 200,
+      damping: 15,
+    },
+  },
+};
 
 export function Registration() {
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { once: true, margin: "-100px" });
+
   const navigate = useNavigate();
   const [activeEventId, setActiveEventId] = useState(null);
-  const [loadingActiveEvent, setLoadingActiveEvent] = useState(true);
-  const [videoIndex, setVideoIndex] = useState(0);
-
-  const videoList = [VideoBg1, VideoBg2, VideoBg3];
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchActiveEvent = async () => {
-      setLoadingActiveEvent(true);
       try {
         const eventsRef = collection(db, "events");
         const q = query(eventsRef, where("isActive", "==", true), limit(1));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          const activeEventDoc = querySnapshot.docs[0];
-          setActiveEventId(activeEventDoc.id);
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          setActiveEventId(snapshot.docs[0].id);
         } else {
           setActiveEventId(null);
         }
       } catch (error) {
-        console.error("Error fetching active event:", error);
+        console.error("Failed to fetch active event:", error);
         setActiveEventId(null);
       } finally {
-        setLoadingActiveEvent(false);
+        setLoading(false);
       }
     };
 
     fetchActiveEvent();
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setVideoIndex((prev) => (prev + 1) % videoList.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [videoList.length]);
-
-  const bubbles = Array.from({ length: 7 });
-
-  const floatVariants = {
-    animate: {
-      y: [0, -15, 0],
-      transition: {
-        duration: 5,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.3 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
-    },
+  const handleRegisterClick = () => {
+    if (activeEventId) {
+      navigate(`/register-now/${activeEventId}`);
+    } else if (!loading) {
+      alert("No active event is currently available.");
+    }
   };
 
   return (
-    <section className="relative py-28 px-4 text-center overflow-hidden">
-      {/* Background Video */}
-      <video
-        key={videoIndex}
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-60 transition-opacity duration-1000"
-        src={videoList[videoIndex]}
-      />
+    <div
+      ref={sectionRef}
+      className="relative bg-white overflow-hidden py-20 px-4 sm:px-12 lg:px-20"
+    >
+      {/* Background Blobs */}
+      <div className="absolute inset-0 z-0 animate-gradient bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white via-blue-200 to-white blur-2xl opacity-60" />
+      <div className="absolute top-10 left-10 w-40 h-40 bg-purple-300 rounded-full opacity-20 animate-float z-0" />
+      <div className="absolute bottom-10 right-10 w-56 h-56 bg-blue-300 rounded-full opacity-30 animate-float-slow z-0" />
 
-      {/* Soft Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/25 z-10" />
-
-      {/* Floating Bubbles */}
-      {bubbles.map((_, i) => (
-        <motion.div
-          key={i}
-          variants={floatVariants}
-          animate="animate"
-          className="absolute rounded-full opacity-20 blur-2xl"
-          style={{
-            width: `${30 + Math.random() * 50}px`,
-            height: `${30 + Math.random() * 50}px`,
-            backgroundColor: `hsl(210, 40%, 90%)`,
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            zIndex: 5,
-          }}
-        />
-      ))}
-
-      {/* Central Glow */}
-      <div className="absolute top-1/2 left-1/2 w-[450px] h-[450px] bg-blue-100 rounded-full opacity-30 blur-3xl transform -translate-x-1/2 -translate-y-1/2 animate-pulse z-5" />
-
-      {/* Card Content */}
+      {/* Content */}
       <motion.div
-        className="relative z-50 max-w-3xl mx-auto p-10 shadow-xl cloud-container"
         variants={containerVariants}
         initial="hidden"
-        animate="visible"
-        whileHover={{ rotateX: 3, rotateY: -3 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        animate={inView ? "visible" : "hidden"}
+        className="relative z-10 text-center max-w-4xl mx-auto space-y-10"
       >
-        <motion.h4 variants={itemVariants} className="text-2xl  text-gray-800 mb-6">
-          ☁️ "The future is no longer a distant concept—it's here, and it's waiting for you. By registering today, you're not just joining a platform; you're stepping into a world of limitless possibilities, innovation, and connection. Don’t stand on the sidelines while others shape the next digital frontier. Take the first step toward your metaverse journey and be part of the transformation that’s redefining how we live, work, and interact."
-        </motion.h4>
+        {/* Heading */}
+        <motion.h1
+          variants={fadeInUp}
+          className="text-4xl md:text-5xl font-extrabold text-gray-900"
+        >
+          <span className="text-purple-700">“</span> Empowering Education for
+          the Future <span className="text-purple-700">”</span>
+        </motion.h1>
 
+        {/* Subheading */}
+        <motion.p
+          variants={fadeInUp}
+          className="text-gray-600 text-lg italic"
+        >
+          Join the movement of interactive learning and growth 🚀
+        </motion.p>
 
+        {/* Button */}
+        <motion.button
+          variants={scaleFade}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          disabled={loading || !activeEventId}
+          onClick={handleRegisterClick}
+          className="inline-flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "Loading..." : "Register Now"}{" "}
+          <Rocket size={20} className="animate-pulse" />
+        </motion.button>
 
-        <motion.div variants={itemVariants}>
-          <Button
-            onClick={() => {
-              if (activeEventId) {
-                navigate(`/register-now/${activeEventId}`);
-              } else if (!loadingActiveEvent) {
-                alert("There are currently no active events open for registration.");
-              }
-            }}
-            disabled={loadingActiveEvent || !activeEventId}
-            className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow-md hover:bg-indigo-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loadingActiveEvent ? "Loading Event..." : "Register Now"}
-          </Button>
+        {/* Badges */}
+        <motion.div
+          variants={containerVariants}
+          className="flex justify-center mt-4 gap-6 text-sm text-gray-500"
+        >
+          {[
+            { icon: <ShieldCheck size={16} />, label: "Secure" },
+            { icon: <BadgeCheck size={16} />, label: "Future-ready" },
+            { icon: <Sparkles size={16} />, label: "Trusted" },
+          ].map((item, index) => (
+            <motion.span
+              key={index}
+              variants={fadeInUp}
+              className="flex items-center gap-1 transition-colors duration-300 hover:text-purple-700 cursor-default"
+              whileHover={{ scale: 1.1 }}
+            >
+              {item.icon}
+              {item.label}
+            </motion.span>
+          ))}
         </motion.div>
 
+        {/* Cards */}
         <motion.div
-          whileHover={{ opacity: 1, y: 0 }}
-          initial={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
-          className="mt-6 text-sm italic text-gray-500 opacity-0"
+          variants={containerVariants}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-14"
         >
-          “The future belongs to those who create it.”
+          {promises.map((promise, index) => (
+            <motion.div
+              key={index}
+              variants={fadeInUp}
+              whileHover={{
+                rotate: [0, 2, -2, 1, -1, 0],
+                transition: { duration: 0.4, repeat: Infinity },
+              }}
+              className="relative bg-white border border-black rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col items-center text-center space-y-3"
+            >
+              <motion.div
+                whileHover={{ scale: 1.3, rotate: 10 }}
+                className="text-purple-700 transition-transform duration-300"
+              >
+                {promise.icon}
+              </motion.div>
+              <h3 className="text-lg font-bold">{promise.title}</h3>
+              <p className="text-gray-600 text-sm">{promise.desc}</p>
+            </motion.div>
+          ))}
         </motion.div>
       </motion.div>
-
-      <style>{`
-        .cloud-container {
-          position: relative;
-          background: linear-gradient(to bottom right, #e6f0fa, #f9fbfd);
-          border-radius: 40px;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
-          z-index: 50;
-        }
-
-        .cloud-container::before,
-        .cloud-container::after {
-          content: '';
-          position: absolute;
-          background: linear-gradient(to bottom right, #e6f0fa, #f9fbfd);
-          border-radius: 50%;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-          z-index: -1;
-        }
-
-        .cloud-container::before {
-          width: 100px;
-          height: 100px;
-          top: -45px;
-          left: 50px;
-          box-shadow:
-            60px 20px 0 #d6e3f7,
-            -60px 20px 0 #d6e3f7;
-        }
-
-        .cloud-container::after {
-          width: 120px;
-          height: 120px;
-          top: -55px;
-          right: 50px;
-          box-shadow:
-            40px 30px 0 #d6e3f7,
-            -40px 30px 0 #d6e3f7;
-        }
-      `}</style>
-    </section>
+    </div>
   );
 }
