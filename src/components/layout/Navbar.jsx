@@ -88,7 +88,7 @@ export function Navbar() {
               { label: "Members", path: "/members" },
               { label: "Event", path: "/events" }, // lowercase path fixed
               { label: "Contact", path: "/contact" },
-              { label: "Join", path: "/join-club" },
+              { label: "Join Club", path: "/join-club" },
             ].map((item, i) => (
               <motion.div
                 key={item.path}
