@@ -140,7 +140,7 @@ export function Registration() {
           onClick={handleRegisterClick}
           className="inline-flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Loading..." : "Register Now"}{" "}
+          {loading ? "Loading..." : "Register Event"}{" "}
           <Rocket size={20} className="animate-pulse" />
         </motion.button>
 
@@ -196,3 +196,4 @@ export function Registration() {
     </div>
   );
 }
+
