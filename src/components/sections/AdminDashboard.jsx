@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { collection, query, orderBy, onSnapshot, where, doc, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, where, doc, updateDoc, addDoc, serverTimestamp, deleteDoc, getDoc, getDocs, writeBatch } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { db, auth } from "@/firebase/config";
 import { Link, useNavigate } from "react-router-dom";
@@ -28,19 +28,20 @@ export function AdminDashboard() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchCategory, setSearchCategory] = useState("all");
+  const [registrationTypeFilter, setRegistrationTypeFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("registrations");
   const navigate = useNavigate();
 
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
   const [newEventFormData, setNewEventFormData] = useState({
     eventName: "",
-    registrationFee: 0, 
+    registrationFee: 0,
     currency: "INR",
     description: "",
     isActive: false,
+    eventType: "INDIVIDUAL"
   });
-  const [editingEvent, setEditingEvent] = useState(null); 
+  const [editingEvent, setEditingEvent] = useState(null);
   const [isEditEventDialogOpen, setIsEditEventDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export function AdminDashboard() {
       setError(prevError => `${prevError ? prevError + "\n" : ""}Failed to load ${collectionName}: ${err.message}`);
     };
     
-    let initialLoadsPending = 5; 
+    let initialLoadsPending = 5;
     const checkDoneLoading = () => {
       initialLoadsPending--;
       if (initialLoadsPending === 0) {
@@ -115,20 +116,30 @@ export function AdminDashboard() {
       console.error("[AdminDashboard] Sign out error:", err);
     }
   };
+  
   const downloadCSV = () => { 
     let headers = [];
     let CsvData = [];
     let filename = "";
     
+    const isHackathon = (reg) => reg.teamName || (reg.members && reg.members.length > 0);
+    const getFullName = (reg) => isHackathon(reg) ? reg.teamName || 'N/A' : reg.fullName || 'N/A';
+    const getDetails = (reg) => isHackathon(reg) ? `Team Size: ${reg.teamSize || 'N/A'}` : `Reg No: ${reg.registrationNumber || 'N/A'}`;
+    const getExtraDetails = (reg) => isHackathon(reg) ? `Leader: ${reg.members?.[0]?.email || 'N/A'}` : `Email: ${reg.email || 'N/A'}`;
+    const getDate = (reg) => (reg.registrationTimestamp?.toDate ? reg.registrationTimestamp.toDate().toLocaleString() : (reg.failureTimestamp?.toDate ? reg.failureTimestamp.toDate().toLocaleString() : (reg.timestamp?.toDate ? reg.timestamp.toDate().toLocaleString() : '')));
+
     if (activeTab === "registrations") {
-      headers = ['Full Name', 'Reg Number', 'Email', 'Event Name', 'Status', 'Payment ID', 'Order ID', 'Date', 'Department', 'Contact No.', 'Error Code', 'Error Desc.'];
+      headers = ['Event Type', 'Name / Team Name', 'Details 1', 'Details 2', 'Event Name', 'Status', 'Payment ID', 'Order ID', 'Date'];
       CsvData = filteredData.map(reg => [
-        reg.fullName || '', reg.registrationNumber || '', reg.email || '', reg.eventName || '', reg.paymentStatus || '', 
-        reg.paymentId || reg.razorpayPaymentId || '', reg.orderId || reg.razorpayOrderId || '',
-        (reg.registrationTimestamp?.toDate ? reg.registrationTimestamp.toDate().toLocaleString() : (reg.failureTimestamp?.toDate ? reg.failureTimestamp.toDate().toLocaleString() : (reg.timestamp?.toDate ? reg.timestamp.toDate().toLocaleString() : ''))),
-        reg.department || '', reg.contactNumber || '',
-        reg.paymentStatus === "FAILED" ? (reg.errorCode || '') : '',
-        reg.paymentStatus === "FAILED" ? (reg.errorDescription || '') : ''
+        reg.eventType || (isHackathon(reg) ? 'HACKATHON' : 'INDIVIDUAL'),
+        getFullName(reg),
+        getDetails(reg),
+        getExtraDetails(reg),
+        reg.eventName || 'N/A',
+        reg.paymentStatus || 'N/A', 
+        reg.paymentId || reg.razorpayPaymentId || 'N/A',
+        reg.orderId || reg.razorpayOrderId || 'N/A',
+        getDate(reg)
       ]);
       filename = `metaverse_all_registrations_${new Date().toISOString().split('T')[0]}.csv`;
     } else if (activeTab === "contacts") {
@@ -155,15 +166,25 @@ export function AdminDashboard() {
     let headers = [];
     let XlsxData = [];
     let filename = "";
+    
+    const isHackathon = (reg) => reg.teamName || (reg.members && reg.members.length > 0);
+    const getFullName = (reg) => isHackathon(reg) ? reg.teamName || 'N/A' : reg.fullName || 'N/A';
+    const getDetails = (reg) => isHackathon(reg) ? `Team Size: ${reg.teamSize || 'N/A'}` : `Reg No: ${reg.registrationNumber || 'N/A'}`;
+    const getExtraDetails = (reg) => isHackathon(reg) ? `Leader: ${reg.members?.[0]?.email || 'N/A'}` : `Email: ${reg.email || 'N/A'}`;
+    const getDate = (reg) => (reg.registrationTimestamp?.toDate ? reg.registrationTimestamp.toDate().toLocaleString() : (reg.failureTimestamp?.toDate ? reg.failureTimestamp.toDate().toLocaleString() : (reg.timestamp?.toDate ? reg.timestamp.toDate().toLocaleString() : '')));
+
     if (activeTab === "registrations") {
-      headers = ['Full Name', 'Reg Number', 'Email', 'Event Name', 'Status', 'Payment ID', 'Order ID', 'Date', 'Department', 'Contact No.', 'Error Code', 'Error Desc.'];
+      headers = ['Event Type', 'Name / Team Name', 'Details 1', 'Details 2', 'Event Name', 'Status', 'Payment ID', 'Order ID', 'Date'];
       XlsxData = filteredData.map(reg => [
-        reg.fullName || '', reg.registrationNumber || '', reg.email || '', reg.eventName || '', reg.paymentStatus || '',
-        reg.paymentId || reg.razorpayPaymentId || '', reg.orderId || reg.razorpayOrderId || '',
-        (reg.registrationTimestamp?.toDate ? reg.registrationTimestamp.toDate().toLocaleString() : (reg.failureTimestamp?.toDate ? reg.failureTimestamp.toDate().toLocaleString() : (reg.timestamp?.toDate ? reg.timestamp.toDate().toLocaleString() : ''))),
-        reg.department || '', reg.contactNumber || '',
-        reg.paymentStatus === "FAILED" ? (reg.errorCode || '') : '',
-        reg.paymentStatus === "FAILED" ? (reg.errorDescription || '') : ''
+        reg.eventType || (isHackathon(reg) ? 'HACKATHON' : 'INDIVIDUAL'),
+        getFullName(reg),
+        getDetails(reg),
+        getExtraDetails(reg),
+        reg.eventName || 'N/A',
+        reg.paymentStatus || 'N/A', 
+        reg.paymentId || reg.razorpayPaymentId || 'N/A',
+        reg.orderId || reg.razorpayOrderId || 'N/A',
+        getDate(reg)
       ]);
       filename = `metaverse_all_registrations_${new Date().toISOString().split('T')[0]}.xlsx`;
     } else if (activeTab === "contacts") {
@@ -189,7 +210,15 @@ export function AdminDashboard() {
 
   const getActiveData = () => {
     switch(activeTab) {
-      case "registrations": return registrations;
+      case "registrations":
+        if (registrationTypeFilter === "all") {
+          return registrations;
+        } else {
+          return registrations.filter(reg => {
+            const eventType = reg.eventType || (reg.teamName || (reg.members && reg.members.length > 0) ? 'HACKATHON' : 'INDIVIDUAL');
+            return eventType === registrationTypeFilter;
+          });
+        }
       case "contacts": return contacts;
       case "joining": return joiningRequests;
       case "events": return events;
@@ -203,10 +232,20 @@ export function AdminDashboard() {
     const term = searchTerm.toLowerCase().trim();
     if (activeTab === "events") { return ( (item.eventName || '').toLowerCase().includes(term) || (item.description || '').toLowerCase().includes(term) || (item.id || '').toLowerCase().includes(term) ); }
     if (activeTab === "adminUsers") { return (item.email || '').toLowerCase().includes(term) || (item.uid || item.id || '').toLowerCase().includes(term); }
-    return Object.values(item).some(value => String(value).toLowerCase().includes(term));
+    
+    const isHackathonEntry = item.teamName || (item.members && item.members.length > 0);
+    const searchFields = [
+      isHackathonEntry ? item.teamName : item.fullName,
+      item.eventName,
+      item.email,
+      item.contactNumber,
+      item.department
+    ].filter(Boolean).map(val => String(val).toLowerCase());
+    
+    return searchFields.some(field => field.includes(term));
   });
 
-  const highlightMatch = (text, term) => { 
+  const highlightMatch = (text, term) => {
     if (!term.trim() || !text) return text;
     const regex = new RegExp(`(${term.trim()})`, 'gi');
     const parts = text.toString().split(regex);
@@ -214,12 +253,22 @@ export function AdminDashboard() {
   };
   
   const handleSetActiveEvent = async (eventIdToActivate) => {
-    console.log("[AdminDashboard] handleSetActiveEvent called for eventId:", eventIdToActivate);
     if (!auth.currentUser) {
       alert("Authentication error. Please sign out and sign in again.");
       return;
     }
     try {
+      const otherEventsQuery = query(collection(db, "events"), where("isActive", "==", true));
+      const otherEventsSnapshot = await getDocs(otherEventsQuery);
+      
+      const batch = writeBatch(db);
+      otherEventsSnapshot.docs.forEach(docSnap => {
+          if (docSnap.id !== eventIdToActivate) {
+              batch.update(doc(db, "events", docSnap.id), { isActive: false });
+          }
+      });
+      await batch.commit();
+
       const eventRef = doc(db, "events", eventIdToActivate);
       await updateDoc(eventRef, { isActive: true });
       console.log(`Event ${eventIdToActivate} successfully set to active.`);
@@ -235,9 +284,8 @@ export function AdminDashboard() {
     setNewEventFormData(prev => ({ ...prev, [name]: val }));
   };
 
-  const handleCreateNewEvent = async (e) => { 
+  const handleCreateNewEvent = async (e) => {
     e.preventDefault();
-    console.log("[AdminDashboard] handleCreateNewEvent called with data:", newEventFormData);
     if (!auth.currentUser) {
       alert("Authentication error. Please sign out and sign in again.");
       return;
@@ -259,7 +307,6 @@ export function AdminDashboard() {
   };
 
   const handleOpenEditEventDialog = (event) => {
-    console.log("[AdminDashboard] handleOpenEditEventDialog called for event:", event);
     setNewEventFormData({
       eventName: event.eventName,
       registrationFee: event.registrationFee, 
@@ -271,9 +318,8 @@ export function AdminDashboard() {
     setIsEditEventDialogOpen(true);
   };
 
-  const handleUpdateEvent = async (e) => { 
+  const handleUpdateEvent = async (e) => {
     e.preventDefault();
-    console.log("[AdminDashboard] handleUpdateEvent called for event:", editingEvent, "with data:", newEventFormData);
     if (!auth.currentUser) {
       alert("Authentication error. Please sign out and sign in again.");
       return;
@@ -300,7 +346,6 @@ export function AdminDashboard() {
   };
 
   const handleDeleteEvent = async (eventId, eventName) => { 
-    console.log("[AdminDashboard] handleDeleteEvent called for eventId:", eventId, "eventName:", eventName);
     if (!auth.currentUser) {
       alert("Authentication error. Please sign out and sign in again.");
       return;
@@ -312,7 +357,7 @@ export function AdminDashboard() {
         alert(`Event "${eventName}" deleted successfully.`);
       } catch (error) {
         console.error("Error deleting event: ", error);
-        alert(`Failed to delete event: ${error.message}`);
+        alert(`Failed to delete event: ${e.message}`);
       }
     }
   };
@@ -331,7 +376,7 @@ export function AdminDashboard() {
         {/* Tab Selector */}
         <div className="flex border-b border-gray-700 mb-6">
           {["registrations", "contacts", "joining", "events", "adminUsers"].map((tabName) => (
-            <button key={tabName} className={`px-4 py-2 font-medium ${activeTab === tabName ? "text-blue-400 border-b-2 border-blue-500" : "text-gray-400 hover:text-white"}`} onClick={() => { setActiveTab(tabName); setSearchTerm(""); setSearchCategory("all"); }}>
+            <button key={tabName} className={`px-4 py-2 font-medium ${activeTab === tabName ? "text-blue-400 border-b-2 border-blue-500" : "text-gray-400 hover:text-white"}`} onClick={() => { setActiveTab(tabName); setSearchTerm(""); setRegistrationTypeFilter("all"); }}>
               {tabName === "registrations" && `Event Registrations (${registrations.length})`}
               {tabName === "contacts" && `Contact Submissions (${contacts.length})`}
               {tabName === "joining" && `Join Requests (${joiningRequests.length})`}
@@ -352,16 +397,20 @@ export function AdminDashboard() {
               {activeTab === "adminUsers" && `Admin Users (${filteredData.length})`}
             </h2>
             <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 w-full md:w-auto items-center">
+              {activeTab === "registrations" && (
+                <select
+                  value={registrationTypeFilter}
+                  onChange={(e) => setRegistrationTypeFilter(e.target.value)}
+                  className="px-3 py-2 bg-gray-700/50 border border-gray-700 rounded-lg text-sm text-white"
+                >
+                  <option value="all">All Registrations</option>
+                  <option value="INDIVIDUAL">Individual</option>
+                  <option value="HACKATHON">Hackathon</option>
+                </select>
+              )}
               {(activeTab !== "events" && activeTab !== "adminUsers") && ( 
                 <>
                   <div className="relative w-full md:w-64"><input type="text" placeholder={`Search ${activeTab}...`} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-3 py-2 bg-gray-700/50 border border-gray-700 rounded-lg" /></div>
-                  {activeTab !== "registrations" && (
-                    <select value={searchCategory} onChange={(e) => setSearchCategory(e.target.value)} className="px-3 py-2 bg-gray-700/50 border border-gray-700 rounded-lg text-sm">
-                      <option value="all">All Fields</option>
-                       {activeTab === "contacts" && ( <> <option value="email">Email</option> <option value="contact">Phone</option> <option value="message">Message</option> </> )}
-                      {activeTab === "joining" && ( <> <option value="reg_number">Reg Number</option> <option value="email">Email</option> <option value="department">Department</option> <option value="contact">Contact</option> <option value="reason">Reason</option> </> )}
-                    </select>
-                  )}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700">Export Data</Button>

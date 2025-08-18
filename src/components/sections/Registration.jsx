@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Sparkles, Rocket, ShieldCheck, BadgeCheck } from "lucide-react";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import { Button } from "@/components/ui/button";
+
+// Remove the import from .env
 
 const promises = [
   {
@@ -23,7 +26,6 @@ const promises = [
   },
 ];
 
-// Animation Variants
 const containerVariants = {
   hidden: {},
   visible: {
@@ -62,25 +64,31 @@ const scaleFade = {
 export function Registration() {
   const sectionRef = useRef(null);
   const inView = useInView(sectionRef, { once: true, margin: "-100px" });
-
   const navigate = useNavigate();
-  const [activeEventId, setActiveEventId] = useState(null);
+  
+  const [activeEvent, setActiveEvent] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchActiveEvent = async () => {
+      setLoading(true);
       try {
         const eventsRef = collection(db, "events");
-        const q = query(eventsRef, where("isActive", "==", true), limit(1));
+        const q = query(
+          eventsRef,
+          where("isActive", "==", true),
+          limit(1)
+        );
         const snapshot = await getDocs(q);
         if (!snapshot.empty) {
-          setActiveEventId(snapshot.docs[0].id);
+          const doc = snapshot.docs[0];
+          setActiveEvent({ id: doc.id, ...doc.data() });
         } else {
-          setActiveEventId(null);
+          setActiveEvent(null);
         }
       } catch (error) {
         console.error("Failed to fetch active event:", error);
-        setActiveEventId(null);
+        setActiveEvent(null);
       } finally {
         setLoading(false);
       }
@@ -90,11 +98,39 @@ export function Registration() {
   }, []);
 
   const handleRegisterClick = () => {
-    if (activeEventId) {
-      navigate(`/register-now/${activeEventId}`);
-    } else if (!loading) {
-      alert("No active event is currently available.");
+    if (loading) return;
+
+    if (!activeEvent) {
+      alert("Registration is currently not active. Please try again later.");
+      return;
     }
+
+    let path;
+    switch (activeEvent.eventType) {
+      case "HACKATHON":
+        path = `/hackathon-register/${activeEvent.id}`;
+        break;
+      case "INDIVIDUAL":
+        path = `/register-now/${activeEvent.id}`;
+        break;
+      default:
+        alert("Registration is currently closed.");
+        return;
+    }
+    navigate(path);
+  };
+  
+  const getButtonText = () => {
+    if (!activeEvent) {
+      return "Registration Closed";
+    }
+    if (activeEvent.eventType === "HACKATHON") {
+      return "Register for Hackathon 💻";
+    }
+    if (activeEvent.eventType === "INDIVIDUAL") {
+      return "Register for Individual Event 🚀";
+    }
+    return "Register Event";
   };
 
   return (
@@ -132,17 +168,28 @@ export function Registration() {
         </motion.p>
 
         {/* Button */}
-        <motion.button
-          variants={scaleFade}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          disabled={loading || !activeEventId}
-          onClick={handleRegisterClick}
-          className="inline-flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? "Loading..." : "Register Event"}{" "}
-          <Rocket size={20} className="animate-pulse" />
-        </motion.button>
+        <div className="flex flex-col sm:flex-row justify-center">
+        {loading ? (
+          <motion.div variants={scaleFade}>
+            <Button disabled className="w-full sm:w-auto">Loading...</Button>
+          </motion.div>
+        ) : !activeEvent ? (
+          <motion.p variants={fadeInUp} className="text-xl font-bold text-gray-800">
+            Registration is opening soon! Stay tuned.
+          </motion.p>
+        ) : (
+          <motion.button
+            variants={scaleFade}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            disabled={!activeEvent}
+            onClick={handleRegisterClick}
+            className="inline-flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300"
+          >
+            {getButtonText()} <Rocket size={20} className="animate-pulse" />
+          </motion.button>
+        )}
+        </div>
 
         {/* Badges */}
         <motion.div
@@ -196,4 +243,3 @@ export function Registration() {
     </div>
   );
 }
-

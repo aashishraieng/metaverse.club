@@ -10,6 +10,7 @@ import { WelcomePage } from "@/components/welcomepage";
 import JoiningForm from "@/components/JoinForm.jsx";
 import { Registration } from "@/components/sections/Registration";
 import { RegistrationNow } from "@/components/sections/RegistrationNow";
+import { HackathonRegistration } from "@/components/sections/HackathonRegistration"; // Import the new component
 import { PaymentSuccess } from "@/components/sections/PaymentSuccess";
 import { PaymentFailed } from "@/components/sections/PaymentFailed"; // Added
 import TermsAndConditions from "@/components/sections/tnc";
@@ -23,10 +24,6 @@ import { AdminLogin } from "@/components/sections/AdminLogin";
 import { AdminDashboard } from "@/components/sections/AdminDashboard";
 import { AdminSetup } from "@/components/sections/AdminSetup";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-
-
-
-
 
 function App() {
   const location = useLocation();
@@ -55,46 +52,46 @@ function App() {
       opacity: 0,
     }),
   };
-  
+
   return (
     <div className="min-h-screen bg-white">
       {showWelcomePage ? (
         <WelcomePage />
-      ):(
+      ) : (
         <>
           {!location.pathname.startsWith('/admin') && <Navbar />}
-          
+
           <main className="bg-white min-h-screen overflow-hidden">
             <AnimatePresence mode="wait" custom={direction.current}>
-              <motion.div 
-                key={location.pathname} 
-                custom={direction.current} 
-                variants={variants} 
+              <motion.div
+                key={location.pathname}
+                custom={direction.current}
+                variants={variants}
                 initial="initial"
-                animate="animate" 
-                exit="exit" 
-                transition={{duration:0.5,ease:"easeInOut"}}
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.5, ease: "easeInOut" }}
               >
                 <Routes location={location} key={location.pathname}>
                   <Route path="/" element={
                     <>
                       <Hero />
                       <Registration />
-                     
                       <Promise />
                       <Features />
                     </>
                   } />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/join-club" element={<JoiningForm />} />
-                  <Route path="/register-now/:eventId" element={<RegistrationNow />} /> {/* Modified */}
+                  <Route path="/register-now/:eventId" element={<RegistrationNow />} />
+                  <Route path="/hackathon-register/:eventId" element={<HackathonRegistration />} /> {/* Added new route */}
                   <Route path="/payment-success" element={<PaymentSuccess />} />
-                  <Route path="/payment-failed" element={<PaymentFailed />} /> {/* Added */}
+                  <Route path="/payment-failed" element={<PaymentFailed />} />
                   <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
                   <Route path="/refund-policy" element={<RefundPolicy />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/members" element={<Members />} />
-                  <Route path="/events" element={<EventPage/>} />
+                  <Route path="/events" element={<EventPage />} />
                   <Route path="/admin" element={<AdminLogin />} />
                   <Route path="/admin/dashboard" element={
                     <ProtectedRoute>
@@ -110,7 +107,7 @@ function App() {
               </motion.div>
             </AnimatePresence>
           </main>
-          
+
           {!location.pathname.startsWith('/admin') && <Footer />}
         </>
       )}

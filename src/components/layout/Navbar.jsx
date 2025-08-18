@@ -4,6 +4,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import "./Navbar.css";
+
+// Remove the import from .env
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,8 +31,7 @@ export function Navbar() {
     }),
   };
 
-  // 🔽 Fetch activeEventId from Firebase
-  const [activeEventId, setActiveEventId] = useState(null);
+  const [activeEvent, setActiveEvent] = useState(null);
   const [loadingActiveEvent, setLoadingActiveEvent] = useState(true);
 
   useEffect(() => {
@@ -37,18 +39,24 @@ export function Navbar() {
       setLoadingActiveEvent(true);
       try {
         const eventsRef = collection(db, "events");
-        const q = query(eventsRef, where("isActive", "==", true), limit(1));
+        // Query for a single active event without filtering by type
+        const q = query(
+          eventsRef,
+          where("isActive", "==", true),
+          limit(1)
+        );
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
           const activeEventDoc = querySnapshot.docs[0];
-          setActiveEventId(activeEventDoc.id);
+          // FIX: Correctly store the document ID with the event data
+          setActiveEvent({ id: activeEventDoc.id, ...activeEventDoc.data() });
         } else {
-          setActiveEventId(null);
+          setActiveEvent(null);
         }
       } catch (error) {
         console.error("Error fetching active event:", error);
-        setActiveEventId(null);
+        setActiveEvent(null);
       } finally {
         setLoadingActiveEvent(false);
       }
@@ -56,6 +64,30 @@ export function Navbar() {
 
     fetchActiveEvent();
   }, []);
+
+  const handleRegisterClick = () => {
+    if (loadingActiveEvent) return;
+
+    if (!activeEvent) {
+      alert("Registration is currently not active. Please try again later.");
+      return;
+    }
+
+    let path;
+    switch (activeEvent.eventType) {
+      case "HACKATHON":
+        path = `/hackathon-register/${activeEvent.id}`;
+        break;
+      case "INDIVIDUAL":
+        path = `/register-now/${activeEvent.id}`;
+        break;
+      default:
+        alert("Registration is currently closed.");
+        return;
+    }
+    navigate(path);
+  };
+
 
   return (
     <nav
@@ -86,7 +118,7 @@ export function Navbar() {
           {isHome &&
             [
               { label: "Members", path: "/members" },
-              { label: "Event", path: "/events" }, // lowercase path fixed
+              { label: "Event", path: "/events" },
               { label: "Contact", path: "/contact" },
               { label: "Join Club", path: "/join-club" },
             ].map((item, i) => (
@@ -109,7 +141,6 @@ export function Navbar() {
         </div>
 
         {/* Right side: Back & Register Now */}
-        {/* Right side: Back & Register Now */}
         <div className="ml-auto flex items-center gap-3 sm:flex hidden">
 
           {!isHome && (
@@ -129,25 +160,29 @@ export function Navbar() {
             </motion.div>
           )}
 
-          {/* ✅ Register Now Button */}
+          {/* Registration Button */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Button
-              onClick={() => {
-                if (activeEventId) {
-                  navigate(`/register-now/${activeEventId}`);
-                } else if (!loadingActiveEvent) {
-                  alert("There are currently no active events open for registration.");
-                }
-              }}
-              disabled={loadingActiveEvent || !activeEventId}
-              className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loadingActiveEvent ? "Loading Event..." : "Register Now"}
-            </Button>
+            {loadingActiveEvent ? (
+              <Button disabled className="px-6 py-2 bg-gray-400 text-white font-semibold rounded-md shadow-md cursor-not-allowed">
+                Loading Event...
+              </Button>
+            ) : !activeEvent ? (
+              <Button disabled className="px-6 py-2 bg-gray-400 text-white font-semibold rounded-md shadow-md cursor-not-allowed">
+                Coming Soon
+              </Button>
+            ) : (
+              <Button
+                onClick={handleRegisterClick}
+                disabled={!activeEvent}
+                className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 transition duration-300"
+              >
+                Register Now
+              </Button>
+            )}
           </motion.div>
         </div>
 
@@ -219,20 +254,24 @@ export function Navbar() {
               </motion.div>
             ))}
 
-            {/* Register Now (mobile) */}
-            <Button
-              onClick={() => {
-                if (activeEventId) {
-                  closeMenuAndNavigate(`/register-now/${activeEventId}`);
-                } else if (!loadingActiveEvent) {
-                  alert("No active event found.");
-                }
-              }}
-              disabled={loadingActiveEvent || !activeEventId}
-              className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loadingActiveEvent ? "Loading..." : "Register Now"}
-            </Button>
+            {/* Registration Button (mobile) */}
+            {loadingActiveEvent ? (
+              <Button disabled className="w-3/4 px-6 py-2 bg-gray-400 text-white font-semibold rounded-md shadow-md cursor-not-allowed">
+                Loading...
+              </Button>
+            ) : !activeEvent ? (
+              <Button disabled className="w-3/4 px-6 py-2 bg-gray-400 text-white font-semibold rounded-md shadow-md cursor-not-allowed">
+                Coming Soon
+              </Button>
+            ) : (
+              <Button
+                onClick={handleRegisterClick}
+                disabled={!activeEvent}
+                className="w-3/4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 transition duration-300"
+              >
+                Register Now
+              </Button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

@@ -13,13 +13,14 @@ export function EventsTable({ data, highlightMatch, searchTerm, onSetActive, onE
       <thead>
         <tr className="bg-gray-700/50 text-left">
           <th className="p-3">Event Name</th>
+          <th className="p-3">Event Type</th>
           <th className="p-3">Fee</th>
           <th className="p-3">Status</th>
           <th className="p-3">Actions</th>
         </tr>
       </thead>
       <tbody>
-        {data.map((event, index) => (
+        {data.filter(event => event && event.eventName).map((event, index) => (
           <motion.tr 
             key={event.id}
             initial={{ opacity: 0 }}
@@ -28,7 +29,14 @@ export function EventsTable({ data, highlightMatch, searchTerm, onSetActive, onE
             className={`${index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-750/40"} hover:bg-gray-700/70 text-gray-300`}
           >
             <td className="p-3 border-t border-gray-700">{highlightMatch(event.eventName, searchTerm)}</td>
-            <td className="p-3 border-t border-gray-700">{(event.registrationFee / 100).toFixed(2)} {event.currency}</td>
+            <td className="p-3 border-t border-gray-700">{event.eventType || "N/A"}</td>
+            <td className="p-3 border-t border-gray-700">
+                {typeof event.registrationFee === 'number' ? (
+                    (event.registrationFee / 100).toFixed(2)
+                ) : (
+                    'N/A'
+                )} {event.currency || 'INR'}
+            </td>
             <td className="p-3 border-t border-gray-700">
               <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                 event.isActive ? "bg-green-500/20 text-green-300" : "bg-gray-500/20 text-gray-300"
@@ -41,14 +49,14 @@ export function EventsTable({ data, highlightMatch, searchTerm, onSetActive, onE
                 size="sm"
                 variant="outline"
                 onClick={() => onEdit(event)}
-                  className="text-blue-400 border-blue-400 hover:bg-blue-400/10 hover:text-blue-300"
+                className="text-blue-400 border-blue-400 hover:bg-blue-400/10 hover:text-blue-300"
               >
                 <Edit2 className="h-3 w-3 mr-1" /> Edit
               </Button>
               {!event.isActive && (
                 <Button 
                   size="sm" 
-                  onClick={() => onSetActive(event.id)} 
+                  onClick={() => onSetActive(event.id, event.eventType)}
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   Set Active

@@ -13,19 +13,17 @@ export function CreateEventDialog({
   onInputChange, 
   onSubmit, 
   isEditMode,
-  onClose // Added onClose to handle dialog close actions like resetting form
+  onClose
 }) {
-  // Use a local handler for onOpenChange to also call onClose when dialog is closed
   const handleOpenChange = (open) => {
     if (!open && onClose) {
-      onClose(); // Call the passed onClose handler (which resets form in AdminDashboard)
+      onClose();
     }
-    onOpenChange(open); // Propagate the open state change
+    onOpenChange(open);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {/* DialogTrigger is handled by AdminDashboard, this component is just the content */}
       <DialogContent className="sm:max-w-[525px] bg-gray-800 text-white border-gray-700">
         <DialogHeader>
           <DialogTitle>{isEditMode ? "Edit Event" : "Create New Event"}</DialogTitle>
@@ -52,7 +50,7 @@ export function CreateEventDialog({
               name="registrationFee" 
               type="number" 
               step="0.01" 
-              value={formData.registrationFee / 100} // Display in currency units
+              value={formData.registrationFee / 100}
               onChange={onInputChange} 
               className="bg-gray-700 border-gray-600 text-white" 
               required 
@@ -68,6 +66,21 @@ export function CreateEventDialog({
               className="bg-gray-700 border-gray-600 text-white" 
               required 
             />
+          </div>
+          <div>
+            <Label htmlFor="eventType" className="text-gray-300">Event Type</Label>
+            <select
+              id="eventType"
+              name="eventType"
+              value={formData.eventType}
+              onChange={onInputChange}
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+              required
+            >
+              <option value="">Select event type</option>
+              <option value="INDIVIDUAL">Individual Registration</option>
+              <option value="HACKATHON">Hackathon (Team) Registration</option>
+            </select>
           </div>
           <div>
             <Label htmlFor="description" className="text-gray-300">Description</Label>
